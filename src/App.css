@@ -31,6 +31,14 @@
   left: 0;
 }
 
+.input-text.no-match {
+  color: rgb(161, 29, 29);
+}
+
+.input-text.match {
+  color: rgb(29, 161, 73);
+}
+
 input {
   height: 3rem;
   width: 20rem;
