@@ -6,6 +6,7 @@ const sampleText =
 function App() {
   const [input, setInput] = useState("");
   const [words, setWords] = useState(sampleText.split(" "));
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
   const inputRef = useRef();
 
@@ -17,7 +18,11 @@ function App() {
     setInputFocus();
   }, []);
 
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  useEffect(() => {
+    if (currentWordIndex === words.length - 1) {
+      handleRestart();
+    }
+  }, [currentWordIndex, words]);
 
   const inputMatches = words[currentWordIndex].includes(input.trim());
 
@@ -33,8 +38,6 @@ function App() {
     let inputValue = e.target.value;
     setInput(inputValue);
   };
-
-  const handleSubmit = () => {};
 
   const handleOnKeyUp = (e) => {
     const value = e.target.value;
@@ -85,7 +88,7 @@ function App() {
             />
           ))}
       </div>
-      <form onSubmit={handleSubmit} className="form">
+      <div className="form">
         <input
           ref={inputRef}
           type="text"
@@ -96,7 +99,7 @@ function App() {
         <button type="button" onClick={handleRestart} className="btn">
           restart
         </button>
-      </form>
+      </div>
     </div>
   );
 }
