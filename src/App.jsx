@@ -9,13 +9,25 @@ function App() {
 
   const inputRef = useRef();
 
-  useEffect(() => {
+  const setInputFocus = () => {
     inputRef.current.focus();
+  };
+
+  useEffect(() => {
+    setInputFocus();
   }, []);
 
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
   const inputMatches = words[currentWordIndex].includes(input.trim());
+
+  const handleRestart = () => {
+    console.log("restart");
+    setCurrentWordIndex(0);
+    setInput("");
+    setInputFocus();
+    setWords(sampleText.split(" "));
+  };
 
   const handleInput = (e) => {
     let inputValue = e.target.value;
@@ -51,6 +63,7 @@ function App() {
       <div className="temporary-data">
         <span>Current Input: {input}</span>
         <span>Current Word: {words[currentWordIndex]}</span>
+        <span>Current Words: {words.length}</span>
         {input.length ? (
           <span>{inputMatches ? "match" : "no-match"}</span>
         ) : (
@@ -63,14 +76,13 @@ function App() {
       <div className="text-container sample-text">
         {words.length != 0 &&
           words.map((word, idx) => (
-            <div
-              className={`word ${currentWordIndex === idx ? "active" : ""}`}
+            <Word
+              word={word}
               key={idx}
-            >
-              {[...word].map((letter, idx) => (
-                <span key={idx}>{letter}</span>
-              ))}
-            </div>
+              currentWordIndex={currentWordIndex}
+              idx={idx}
+              inputMatches={inputMatches}
+            />
           ))}
       </div>
       <form onSubmit={handleSubmit} className="form">
@@ -81,7 +93,7 @@ function App() {
           onKeyUp={handleOnKeyUp}
           onChange={handleInput}
         />
-        <button type="button" className="btn">
+        <button type="button" onClick={handleRestart} className="btn">
           restart
         </button>
       </form>
@@ -90,3 +102,17 @@ function App() {
 }
 
 export default App;
+
+function Word({ word, currentWordIndex, idx, inputMatches }) {
+  return (
+    <div
+      className={`word ${currentWordIndex === idx ? "active" : ""}${
+        currentWordIndex > idx ? "correct" : ""
+      }`}
+    >
+      {[...word].map((letter, idx) => (
+        <span key={idx}>{letter}</span>
+      ))}
+    </div>
+  );
+}

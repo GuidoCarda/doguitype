@@ -60,15 +60,20 @@ input.invisible {
 
 .word {
   user-select: none;
+
+  border-radius: 0.3rem;
 }
 
 .word.active {
   color: rgb(213, 213, 213);
 }
 
-.word.error {
+.word.active.error {
   color: rgb(139, 42, 42);
   text-decoration: underline;
+}
+.word.correct {
+  color: rgb(75, 145, 76);
 }
 
 .word > .correct {
@@ -96,7 +101,9 @@ input.invisible {
 .form {
   display: flex;
   gap: 1rem;
+  margin-inline: auto;
   justify-content: center;
+  width: min(90vw, 800px);
 }
 
 .btn {
@@ -110,7 +117,8 @@ input.invisible {
   align-items: center;
   min-width: 10rem;
   border-radius: 0.4rem;
-  outline: none;
+  outline: 4px solid transparent;
+
   border: none;
   cursor: pointer;
   user-select: none;
@@ -121,4 +129,8 @@ input.invisible {
 
 .btn:hover {
   background-color: hsl(30, 66%, 55%);
+}
+
+.btn:focus {
+  outline-color: rgba(219, 148, 77, 0.379);
 }
