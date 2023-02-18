@@ -28,15 +28,19 @@ function App() {
     const value = e.target.value;
     const currentWord = words[currentWordIndex];
 
-    console.log(input.length);
     if (input.length > 0) {
       console.log(currentWord[input.length - 1]);
       console.log(value.at(-1));
       console.log(currentWord[input.length - 1] === value.at(-1));
     }
 
+    if (input.length === currentWord.length) {
+      console.log(
+        "Las palabras son iguales : " + (input === currentWord).toString()
+      );
+    }
+
     if (e.keyCode === 32) {
-      setUserText(input);
       setCurrentWordIndex((prev) => prev + 1);
       setInput("");
     }
@@ -59,7 +63,10 @@ function App() {
       <div className="text-container sample-text">
         {words.length != 0 &&
           words.map((word, idx) => (
-            <div className={`word`} key={idx}>
+            <div
+              className={`word ${currentWordIndex === idx ? "active" : ""}`}
+              key={idx}
+            >
               {[...word].map((letter, idx) => (
                 <span key={idx}>{letter}</span>
               ))}
