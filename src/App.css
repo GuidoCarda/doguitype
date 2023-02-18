@@ -16,6 +16,10 @@
   width: min(90vw, 800px);
   margin-inline: auto;
   margin-block: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-items: flex-start;
+  gap: 0.5rem;
 }
 
 .sample-text,
@@ -41,9 +45,80 @@
 
 input {
   height: 3rem;
-  width: 20rem;
+  flex: 1;
   border-radius: 0.5rem;
   padding-inline: 1rem;
   font-family: inherit;
   font-size: 1rem;
+  outline: none;
+  border: none;
+}
+
+input.invisible {
+  visibility: hidden;
+}
+
+.word {
+  user-select: none;
+}
+
+.word.active {
+  color: rgb(213, 213, 213);
+}
+
+.word.error {
+  color: rgb(139, 42, 42);
+  text-decoration: underline;
+}
+
+.word > .correct {
+  color: rgb(213, 213, 213);
+}
+
+.word > .incorrect {
+  color: rgb(184, 121, 34);
+}
+
+.temporary-data {
+  flex-grow: 1;
+  flex-shrink: 0;
+  margin-inline: auto;
+  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(0, 0, 0, 0.217);
+  padding: 1rem;
+  align-items: flex-start;
+  border-radius: 0.5rem;
+  color: rgb(185, 174, 174);
+}
+
+.form {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn {
+  height: 3rem;
+  display: flex;
+  font-size: 1.25rem;
+  font-family: inherit;
+  font-weight: 600;
+
+  justify-content: center;
+  align-items: center;
+  min-width: 10rem;
+  border-radius: 0.4rem;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  user-select: none;
+
+  background-color: rgb(218, 148, 77);
+  color: hsl(30, 66%, 20%);
+}
+
+.btn:hover {
+  background-color: hsl(30, 66%, 55%);
 }

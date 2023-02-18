@@ -1,32 +1,40 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 const sampleText =
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima incidunt magni qui cumque rem labore facere, facilis doloribus perspiciatis ipsa vitae similique voluptatem inventore blanditiis fuga? Libero est maxime ";
 function App() {
   const [input, setInput] = useState("");
-  const [objectiveInputs, setObjectiveInputs] = useState(sampleText.split(" "));
+  const [words, setWords] = useState(sampleText.split(" "));
 
-  const [userText, setUserText] = useState("");
+  const inputRef = useRef();
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
 
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
-  const inputMatches = objectiveInputs[currentWordIndex]
-    .toLowerCase()
-    .includes(input.trim().toLowerCase());
+  const inputMatches = words[currentWordIndex].includes(input.trim());
 
   const handleInput = (e) => {
     let inputValue = e.target.value;
     setInput(inputValue);
-
-    objectiveInputs[currentWordIndex]
-      .toLowerCase()
-      .includes(inputValue.toLowerCase());
   };
 
   const handleSubmit = () => {};
 
-  const handleOnKeyDown = (e) => {
+  const handleOnKeyUp = (e) => {
+    const value = e.target.value;
+    const currentWord = words[currentWordIndex];
+
+    console.log(input.length);
+    if (input.length > 0) {
+      console.log(currentWord[input.length - 1]);
+      console.log(value.at(-1));
+      console.log(currentWord[input.length - 1] === value.at(-1));
+    }
+
     if (e.keyCode === 32) {
       setUserText(input);
       setCurrentWordIndex((prev) => prev + 1);
@@ -36,20 +44,39 @@ function App() {
 
   return (
     <div className="App">
-      <div className="text-container">
-        <p className={`input-text ${inputMatches ? "match" : "no-match"}`}>
-          {" "}
-          {input}{" "}
-        </p>
-        <p className="sample-text">{sampleText}</p>
+      <div className="temporary-data">
+        <span>Current Input: {input}</span>
+        <span>Current Word: {words[currentWordIndex]}</span>
+        {input.length ? (
+          <span>{inputMatches ? "match" : "no-match"}</span>
+        ) : (
+          <span>Empty</span>
+        )}
+
+        <span>Current word idx: {currentWordIndex}</span>
       </div>
-      <form onSubmit={handleSubmit}>
+
+      <div className="text-container sample-text">
+        {words.length != 0 &&
+          words.map((word, idx) => (
+            <div className={`word`} key={idx}>
+              {[...word].map((letter, idx) => (
+                <span key={idx}>{letter}</span>
+              ))}
+            </div>
+          ))}
+      </div>
+      <form onSubmit={handleSubmit} className="form">
         <input
+          ref={inputRef}
           type="text"
           value={input}
-          onKeyDown={handleOnKeyDown}
+          onKeyUp={handleOnKeyUp}
           onChange={handleInput}
         />
+        <button type="button" className="btn">
+          restart
+        </button>
       </form>
     </div>
   );
