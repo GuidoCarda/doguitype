@@ -69,11 +69,8 @@ input.invisible {
 }
 
 .word.active.error {
-  color: rgb(139, 42, 42);
+  color: rgb(184, 76, 76);
   text-decoration: underline;
-}
-.word.correct {
-  color: rgb(75, 145, 76);
 }
 
 .word > .correct {

@@ -5,14 +5,10 @@ const sampleText =
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima incidunt magni qui cumque rem labore facere, facilis doloribus perspiciatis ipsa vitae similique voluptatem inventore blanditiis fuga? Libero est maxime ";
 function App() {
   const [input, setInput] = useState("");
-  const [words, setWords] = useState(sampleText.split(" "));
+  const words = sampleText.split(" ");
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-
+  const [time, setTime] = useState(60);
   const inputRef = useRef();
-
-  const setInputFocus = () => {
-    inputRef.current.focus();
-  };
 
   useEffect(() => {
     setInputFocus();
@@ -24,10 +20,22 @@ function App() {
     }
   }, [currentWordIndex, words]);
 
-  const inputMatches = words[currentWordIndex].includes(input.trim());
+  // Countdown timer
+  useEffect(() => {
+    if (time === 0) return;
+
+    const timeout = setTimeout(() => {
+      setTime((time) => time - 1);
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [time]);
+
+  const setInputFocus = () => {
+    inputRef.current.focus();
+  };
 
   const handleRestart = () => {
-    console.log("restart");
     setCurrentWordIndex(0);
     setInput("");
     setInputFocus();
@@ -35,43 +43,35 @@ function App() {
   };
 
   const handleInput = (e) => {
-    let inputValue = e.target.value;
+    const inputValue = e.target.value.trim();
+
     setInput(inputValue);
   };
 
   const handleOnKeyUp = (e) => {
-    const value = e.target.value;
-    const currentWord = words[currentWordIndex];
+    const pressedKeyCode = e.keyCode;
 
-    if (input.length > 0) {
-      console.log(currentWord[input.length - 1]);
-      console.log(value.at(-1));
-      console.log(currentWord[input.length - 1] === value.at(-1));
-    }
-
-    if (input.length === currentWord.length) {
-      console.log(
-        "Las palabras son iguales : " + (input === currentWord).toString()
-      );
-    }
-
-    if (e.keyCode === 32) {
+    if (pressedKeyCode === 32) {
       setCurrentWordIndex((prev) => prev + 1);
       setInput("");
     }
   };
 
+  const checkCharEquality = (char1, char2) => char1 === char2;
+  const checkStringEquality = (str1, str2) => str1 === str2;
+
   return (
     <div className="App">
       <div className="temporary-data">
+        <h2>Time: {time}</h2>
         <span>Current Input: {input}</span>
         <span>Current Word: {words[currentWordIndex]}</span>
         <span>Current Words: {words.length}</span>
-        {input.length ? (
+        {/* {input.length ? (
           <span>{inputMatches ? "match" : "no-match"}</span>
         ) : (
           <span>Empty</span>
-        )}
+        )} */}
 
         <span>Current word idx: {currentWordIndex}</span>
       </div>
@@ -82,9 +82,9 @@ function App() {
             <Word
               word={word}
               key={idx}
+              input={input}
               currentWordIndex={currentWordIndex}
               idx={idx}
-              inputMatches={inputMatches}
             />
           ))}
       </div>
@@ -106,16 +106,31 @@ function App() {
 
 export default App;
 
-function Word({ word, currentWordIndex, idx, inputMatches }) {
+function Word({ word, input, currentWordIndex, idx }) {
+  const inputIsMatching = input.length > 0 ? word.includes(input.trim()) : null;
+  const [isIncorrect, setIsIncorrect] = useState([]);
+
+  useEffect(() => {
+    if (currentWordIndex === idx) {
+      console.log(input.at(-1));
+      console.log(word[input.length - 1]);
+      if (input.at(-1) !== word[input.length - 1])
+        setIsIncorrect(isIncorrect.concat(input.length - 1));
+    }
+  }, [input]);
+
   return (
-    <div
-      className={`word ${currentWordIndex === idx ? "active" : ""}${
-        currentWordIndex > idx ? "correct" : ""
-      }`}
-    >
+    <div className={`word ${currentWordIndex === idx ? "active" : ""} }`}>
       {[...word].map((letter, idx) => (
-        <span key={idx}>{letter}</span>
+        <span
+          key={idx}
+          className={`${isIncorrect.includes(idx) ? "incorrect" : ""}`}
+        >
+          {letter}
+        </span>
       ))}
     </div>
   );
 }
+
+// ${currentWordIndex === idx ? "active" : ""}
