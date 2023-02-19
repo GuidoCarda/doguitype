@@ -8,6 +8,7 @@ function App() {
   const words = sampleText.split(" ");
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [time, setTime] = useState(60);
+  const [incorrectWords, SetIncorrectWords] = useState([]);
   const inputRef = useRef();
 
   useEffect(() => {
@@ -52,6 +53,9 @@ function App() {
     const pressedKeyCode = e.keyCode;
 
     if (pressedKeyCode === 32) {
+      if (!checkCharEquality(input, words[currentWordIndex])) {
+        SetIncorrectWords(incorrectWords.concat(currentWordIndex));
+      }
       setCurrentWordIndex((prev) => prev + 1);
       setInput("");
     }
@@ -84,6 +88,7 @@ function App() {
               key={idx}
               input={input}
               currentWordIndex={currentWordIndex}
+              status={incorrectWords.includes(idx) ? "incorrect" : "correct"}
               idx={idx}
             />
           ))}
@@ -106,28 +111,21 @@ function App() {
 
 export default App;
 
-function Word({ word, input, currentWordIndex, idx }) {
-  const inputIsMatching = input.length > 0 ? word.includes(input.trim()) : null;
-  const [isIncorrect, setIsIncorrect] = useState([]);
-
-  useEffect(() => {
-    if (currentWordIndex === idx) {
-      console.log(input.at(-1));
-      console.log(word[input.length - 1]);
-      if (input.at(-1) !== word[input.length - 1])
-        setIsIncorrect(isIncorrect.concat(input.length - 1));
-    }
-  }, [input]);
+function Word({ word, input, currentWordIndex, idx, status }) {
+  const matchingState = word.includes(input.trim()) ? "correct" : "incorrect";
 
   return (
-    <div className={`word ${currentWordIndex === idx ? "active" : ""} }`}>
+    <div
+      className={`word ${
+        currentWordIndex === idx && input.length === 0
+          ? "active"
+          : currentWordIndex === idx && input.length > 0
+          ? `active ${matchingState}`
+          : ""
+      } ${currentWordIndex > idx ? status : ""}`}
+    >
       {[...word].map((letter, idx) => (
-        <span
-          key={idx}
-          className={`${isIncorrect.includes(idx) ? "incorrect" : ""}`}
-        >
-          {letter}
-        </span>
+        <span key={idx}>{letter}</span>
       ))}
     </div>
   );

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -65,7 +67,24 @@ input.invisible {
 }
 
 .word.active {
-  color: rgb(213, 213, 213);
+  color: rgb(229, 229, 229);
+}
+
+.word.correct {
+  color: rgb(34, 184, 62);
+  color: rgb(229, 229, 229);
+}
+
+.word.active.correct {
+  color: rgb(34, 184, 62);
+}
+
+.word.active.incorrect {
+  color: rgb(184, 44, 34);
+}
+
+.word.incorrect {
+  color: rgb(184, 44, 34);
 }
 
 .word.active.error {
