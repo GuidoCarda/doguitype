@@ -4,13 +4,13 @@ import "./App.css";
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
 
 const sampleText =
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima incidunt magni qui cumque rem labore facere, facilis doloribus perspiciatis ipsa vitae similique voluptatem inventore blanditiis fuga? Libero est maxime ";
+  "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloremque expedita explicabo animi nesciunt laboriosam blanditiis est harum? Officiis, cumque? Rerum corrupti repellat odit eaque veritatis, corporis nemo iste harum fuga hic consequuntur nam, odio magnam ad est voluptates quidem, laborum velit perferendis sequi nulla illo non vel? Voluptas assumenda porro blanditiis nulla totam nobis a expedita, dolor eos! Obcaecati ipsam eaque, voluptas in assumenda reprehenderit, quibusdam consectetur dolorum ullam eos temporibus sunt, ipsum officiis est! Illum corporis voluptatibus dicta sunt dolorem repudiandae doloremque, cumque facilis! Repudiandae, veritatis quas. Eveniet incidunt nesciunt alias voluptatem minima adipisci commodi aut placeat dolorem excepturi.";
 
 function App() {
   const [input, setInput] = useState("");
   const words = sampleText.split(" ");
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [time, setTime] = useState(timeBounds.cuarter);
+  const [time, setTime] = useState(timeBounds.minute);
   const [incorrectWords, SetIncorrectWords] = useState([]);
   const inputRef = useRef();
 
@@ -136,6 +136,10 @@ function Word({ word, input, currentWordIndex, idx, status }) {
   useEffect(() => {
     if (!isCurrentWord) return;
     if (input[input.length - 1] === word[input.length - 1]) return;
+
+    if (errors.some((error) => error >= input.length - 1)) {
+      return setErrors(errors.filter((error) => error < input.length - 1));
+    }
 
     setErrors(errors.concat(input.length - 1));
   }, [input]);
