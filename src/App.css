@@ -22,7 +22,13 @@
   flex-wrap: wrap;
   justify-items: flex-start;
   gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: hidden;
 }
+
+/* .text-container::-webkit-scrollbar {
+  display: none;
+} */
 
 .sample-text,
 .input-text {
@@ -158,4 +164,13 @@ input.invisible {
   align-items: center;
   gap: 1rem;
   margin-top: 2rem;
+}
+
+.result {
+  margin-top: 2rem;
+  background: hsl(130, 47%, 36%);
+  border-radius: 0.3rem;
+  width: max-content;
+  margin-inline: auto;
+  padding: 0.25rem 1rem;
 }
