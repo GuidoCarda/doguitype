@@ -14,29 +14,26 @@
 }
 
 .text-container {
-  position: relative;
+  max-height: 7rem;
+  overflow-y: hidden;
+  /* border: 2px solid white; */
   width: min(90vw, 800px);
   margin-inline: auto;
   margin-block: 2rem;
+}
+
+.words {
+  position: relative;
+  bottom: 0;
   display: flex;
   flex-wrap: wrap;
   justify-items: flex-start;
-  max-height: 100px;
-  overflow-y: hidden;
   line-height: 2.2rem;
 }
 
-.sample-text,
-.input-text {
+.sample-text {
   font-size: 1.25rem;
   color: rgb(123, 123, 150);
-}
-
-.input-text {
-  color: white;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .input-text.no-match {

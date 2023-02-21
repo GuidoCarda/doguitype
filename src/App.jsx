@@ -17,7 +17,8 @@ function App() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
-  const inputRef = useRef();
+  const inputRef = useRef(null);
+  const currWordRef = useRef(null);
 
   const [time, setTime] = useState(timeBounds.minute);
   // Countdown timer
@@ -41,6 +42,29 @@ function App() {
     }
   }, [currentWordIndex, words]);
 
+  useEffect(() => {
+    if (
+      currWordRef?.current.offsetTop >= 35 &&
+      currWordRef?.current.offsetLeft === 0
+    ) {
+      console.log(currWordRef?.current.offsetTop);
+      const currWordIdx = currWordRef?.current.id;
+
+      console.log("move showed words");
+
+      const wordsCopy = new Map(words);
+
+      wordsCopy.forEach((value, idx) => {
+        if (idx < currWordIdx) {
+          wordsCopy.delete(idx);
+        }
+      });
+
+      setWords(wordsCopy);
+      // setCurrentWordIndex();
+    }
+  }, [currWordRef.current]);
+
   const setInputFocus = () => {
     inputRef.current.focus();
   };
@@ -63,6 +87,8 @@ function App() {
     const pressedKeyCode = e.keyCode;
 
     if (pressedKeyCode === 32) {
+      console.log(currWordRef);
+
       if (!checkCharEquality(input, words.get(currentWordIndex))) {
         SetIncorrectWords(incorrectWords.add(currentWordIndex));
       }
@@ -77,11 +103,12 @@ function App() {
     return charCount / 5 / 1;
   };
 
-  console.log("re-render");
+  // console.log("re-render");
 
   const checkCharEquality = (char1, char2) => char1 === char2;
   const checkStringEquality = (str1, str2) => str1 === str2;
 
+  // console.log(currentWordIndex);
   const isInputMatching = words.get(currentWordIndex).includes(input);
 
   return (
@@ -94,44 +121,57 @@ function App() {
         <span>Written Characters count: {charCount}</span>
         <span>Current word idx: {currentWordIndex}</span>
       </div>
-      <div className="text-container sample-text">
-        {words.size !== 0 &&
-          [...words.entries()].map((entry, idx) => {
-            const [, word] = entry;
-            if (currentWordIndex === idx) {
-              return (
-                <div
-                  className={`word active ${
-                    isInputMatching ? "correct" : "incorrect"
-                  }`}
-                  key={idx}
-                >
-                  {word}
-                </div>
-              );
-            }
 
-            if (currentWordIndex > idx) {
-              return (
-                <div
-                  className={`word ${
-                    incorrectWords.has(idx) ? "incorrect" : "correct"
-                  }`}
-                  key={idx}
-                >
-                  {word}
-                </div>
-              );
-            }
+      {Boolean(time) && (
+        <div className="text-container sample-text">
+          <div className="words">
+            {words.size !== 0 &&
+              [...words.entries()].map((entry, idx) => {
+                const [id, word] = entry;
+                if (currentWordIndex === id) {
+                  return (
+                    <div
+                      ref={currWordRef}
+                      className={`word active ${
+                        isInputMatching ? "correct" : "incorrect"
+                      }`}
+                      key={idx}
+                      id={id}
+                    >
+                      {word}
+                    </div>
+                  );
+                }
 
-            return (
-              <div className={`word`} key={idx}>
-                {word}
-              </div>
-            );
-          })}
-      </div>
+                if (currentWordIndex > id) {
+                  return (
+                    <div
+                      className={`word ${
+                        incorrectWords.has(idx) ? "incorrect" : "correct"
+                      }`}
+                      key={idx}
+                      id={id}
+                    >
+                      {word}
+                    </div>
+                  );
+                }
 
+                return (
+                  <div className={`word`} key={idx} id={id}>
+                    {word}
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
+
+      {!Boolean(time) && (
+        <div className="result">
+          <h2>Current WPM: {calculateWPM()}</h2>
+        </div>
+      )}
       <div className="form">
         <input
           ref={inputRef}
