@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
@@ -8,23 +8,18 @@ const sampleText =
 
 function App() {
   const [input, setInput] = useState("");
-  const words = sampleText.split(" ");
+  const [words, setWords] = useState(() => {
+    const map = new Map();
+    sampleText.split(" ").forEach((word, idx) => map.set(idx, word));
+    return map;
+  });
+
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [time, setTime] = useState(timeBounds.minute);
-  const [incorrectWords, SetIncorrectWords] = useState([]);
+  const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
   const inputRef = useRef();
 
-  useEffect(() => {
-    setInputFocus();
-  }, []);
-
-  useEffect(() => {
-    if (currentWordIndex === words.length - 1) {
-      handleRestart();
-    }
-  }, [currentWordIndex, words]);
-
+  const [time, setTime] = useState(timeBounds.minute);
   // Countdown timer
   useEffect(() => {
     if (time === 0) return;
@@ -35,6 +30,16 @@ function App() {
 
     return () => clearTimeout(timeout);
   }, [time]);
+
+  useEffect(() => {
+    setInputFocus();
+  }, []);
+
+  useEffect(() => {
+    if (currentWordIndex === words.length - 1) {
+      handleRestart();
+    }
+  }, [currentWordIndex, words]);
 
   const setInputFocus = () => {
     inputRef.current.focus();
@@ -58,9 +63,10 @@ function App() {
     const pressedKeyCode = e.keyCode;
 
     if (pressedKeyCode === 32) {
-      if (!checkCharEquality(input, words[currentWordIndex])) {
-        SetIncorrectWords(incorrectWords.concat(currentWordIndex));
+      if (!checkCharEquality(input, words.get(currentWordIndex))) {
+        SetIncorrectWords(incorrectWords.add(currentWordIndex));
       }
+
       setCharCount((prevCount) => prevCount + input.length);
       setCurrentWordIndex((prev) => prev + 1);
       setInput("");
@@ -71,145 +77,82 @@ function App() {
     return charCount / 5 / 1;
   };
 
+  console.log("re-render");
+
   const checkCharEquality = (char1, char2) => char1 === char2;
   const checkStringEquality = (str1, str2) => str1 === str2;
+
+  const isInputMatching = words.get(currentWordIndex).includes(input);
 
   return (
     <div className="App">
       <div className="temporary-data">
-        <h2>Time: {time}</h2>
+        <h3>Left time: {time} seconds</h3>
         <span>Current Input: {input}</span>
         <span>Current Word: {words[currentWordIndex]}</span>
         <span>Current Words: {words.length}</span>
         <span>Written Characters count: {charCount}</span>
-        {/* {input.length ? (
-          <span>{inputMatches ? "match" : "no-match"}</span>
-        ) : (
-          <span>Empty</span>
-        )} */}
-
         <span>Current word idx: {currentWordIndex}</span>
       </div>
+      <div className="text-container sample-text">
+        {words.size !== 0 &&
+          [...words.entries()].map((entry, idx) => {
+            const [, word] = entry;
+            if (currentWordIndex === idx) {
+              return (
+                <div
+                  className={`word active ${
+                    isInputMatching ? "correct" : "incorrect"
+                  }`}
+                  key={idx}
+                >
+                  {word}
+                </div>
+              );
+            }
 
-      {Boolean(time) ? (
-        <div className="text-container sample-text">
-          {words.length != 0 &&
-            words.map((word, idx) => (
-              <Word
-                word={word}
-                key={idx}
-                input={input}
-                currentWordIndex={currentWordIndex}
-                status={incorrectWords.includes(idx) ? "incorrect" : "correct"}
-                idx={idx}
-              />
-            ))}
-        </div>
-      ) : (
-        <h1 className="result">Gross WPM: {calculateWPM()}</h1>
-      )}
+            if (currentWordIndex > idx) {
+              return (
+                <div
+                  className={`word ${
+                    incorrectWords.has(idx) ? "incorrect" : "correct"
+                  }`}
+                  key={idx}
+                >
+                  {word}
+                </div>
+              );
+            }
 
-      {time ? (
-        <div className="form">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onKeyUp={handleOnKeyUp}
-            onChange={handleInput}
-          />
-          <button type="button" onClick={handleRestart} className="btn">
-            restart
-          </button>
-        </div>
-      ) : (
-        <div className="finished-test">
-          <h2>Se finalizo el tiempo</h2>
-          <button type="button" onClick={handleRestart} className="btn">
-            restart
-          </button>
-        </div>
-      )}
+            return (
+              <div className={`word`} key={idx}>
+                {word}
+              </div>
+            );
+          })}
+      </div>
+
+      <div className="form">
+        <input
+          ref={inputRef}
+          type="text"
+          value={input}
+          onKeyUp={handleOnKeyUp}
+          onChange={handleInput}
+        />
+        <button type="button" onClick={handleRestart} className="btn">
+          restart
+        </button>
+      </div>
+
+      <div className="finished-test">
+        <h2>Se finalizo el tiempo</h2>
+        <button type="button" onClick={handleRestart} className="btn">
+          restart
+        </button>
+      </div>
     </div>
   );
 }
 
 export default App;
-
-function Word({ word, input, currentWordIndex, idx, status }) {
-  const [errors, setErrors] = useState([]);
-
-  const isCurrentWord = currentWordIndex === idx;
-
-  const matchingState = word.includes(input.trim()) ? "correct" : "incorrect";
-
-  useEffect(() => {
-    if (!isCurrentWord) return;
-    if (input[input.length - 1] === word[input.length - 1]) return;
-
-    if (errors.some((error) => error >= input.length - 1)) {
-      return setErrors(errors.filter((error) => error < input.length - 1));
-    }
-
-    setErrors(errors.concat(input.length - 1));
-  }, [input]);
-
-  return (
-    <div className={`word`}>
-      {[...word].map((letter, letterIdx) => {
-        const isCurrentLetter = input.length - 1 === letterIdx;
-
-        if (!isCurrentWord && currentWordIndex > idx) {
-          return (
-            <span
-              key={letterIdx}
-              className={`${
-                errors.includes(letterIdx) ? "incorrect" : "correct"
-              }`}
-            >
-              {letter}
-            </span>
-          );
-        }
-
-        if (isCurrentWord && input.length - 1 > letterIdx) {
-          return (
-            <span
-              key={letterIdx}
-              className={`${
-                errors.includes(letterIdx) ? "incorrect" : "correct"
-              }`}
-            >
-              {letter}
-            </span>
-          );
-        }
-
-        return (
-          <span
-            key={letterIdx}
-            className={`${
-              isCurrentWord && isCurrentLetter
-                ? input.at(-1) === letter
-                  ? "correct"
-                  : "incorrect"
-                : ""
-            }`}
-          >
-            {letter}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
-// ${
-//   currentWordIndex === idx && input.length === 0
-//     ? "active"
-//     : currentWordIndex === idx && input.length > 0
-//     ? `active ${matchingState}`
-//     : ""
-// } ${currentWordIndex > idx ? status : ""}
-
-// ${currentWordIndex === idx ? "active" : ""}

@@ -21,14 +21,10 @@
   display: flex;
   flex-wrap: wrap;
   justify-items: flex-start;
-  gap: 0.5rem;
-  max-height: 400px;
+  max-height: 100px;
   overflow-y: hidden;
+  line-height: 2.2rem;
 }
-
-/* .text-container::-webkit-scrollbar {
-  display: none;
-} */
 
 .sample-text,
 .input-text {
@@ -68,34 +64,29 @@ input.invisible {
 
 .word {
   user-select: none;
-
   border-radius: 0.3rem;
+  padding: 0 0.3rem;
 }
 
 .word.active {
   color: rgb(229, 229, 229);
-}
-
-.word.correct {
-  color: rgb(34, 184, 62);
-  color: rgb(229, 229, 229);
-}
-
-.word.active.correct {
-  color: rgb(34, 184, 62);
+  background: rgb(44, 44, 44);
 }
 
 .word.active.incorrect {
   color: rgb(184, 44, 34);
 }
 
+.word.active.correct {
+  color: rgb(78, 183, 101);
+}
+
 .word.incorrect {
   color: rgb(184, 44, 34);
 }
 
-.word.active.error {
-  color: rgb(184, 76, 76);
-  text-decoration: underline;
+.word.correct {
+  color: rgb(229, 229, 229);
 }
 
 .word > .correct {
