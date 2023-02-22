@@ -8,19 +8,17 @@ const sampleText =
 
 function App() {
   const [input, setInput] = useState("");
-  const [words, setWords] = useState(() => {
-    const map = new Map();
-    sampleText.split(" ").forEach((word, idx) => map.set(idx, word));
-    return map;
-  });
+  const [words, setWords] = useState(new Map());
 
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
   const inputRef = useRef(null);
   const currWordRef = useRef(null);
-
+  const fetchRun = useRef(false);
   const [time, setTime] = useState(timeBounds.minute);
+
+  // console.log(words);
   // Countdown timer
   useEffect(() => {
     if (time === 0) return;
@@ -43,6 +41,7 @@ function App() {
   }, [currentWordIndex, words]);
 
   useEffect(() => {
+    if (!words.size) return;
     if (
       currWordRef?.current.offsetTop >= 35 &&
       currWordRef?.current.offsetLeft === 0
@@ -64,6 +63,26 @@ function App() {
       // setCurrentWordIndex();
     }
   }, [currWordRef.current]);
+
+  const fetchWords = async () => {
+    return fetch("https://random-word-api.herokuapp.com/word?number=100")
+      .then((res) => res.json())
+      .then((data) => data);
+  };
+
+  useEffect(() => {
+    fetchWords().then((data) => {
+      setWords(() => {
+        const map = new Map();
+        data.forEach((word, idx) => map.set(idx, word));
+        return map;
+      });
+    });
+
+    return () => {
+      fetchRun.current = true;
+    };
+  }, []);
 
   const setInputFocus = () => {
     inputRef.current.focus();
@@ -109,7 +128,8 @@ function App() {
   const checkStringEquality = (str1, str2) => str1 === str2;
 
   // console.log(currentWordIndex);
-  const isInputMatching = words.get(currentWordIndex).includes(input);
+  const isInputMatching =
+    words.size && words.get(currentWordIndex).includes(input);
 
   return (
     <div className="App">
@@ -172,18 +192,21 @@ function App() {
           <h2>Current WPM: {calculateWPM()}</h2>
         </div>
       )}
-      <div className="form">
-        <input
-          ref={inputRef}
-          type="text"
-          value={input}
-          onKeyUp={handleOnKeyUp}
-          onChange={handleInput}
-        />
-        <button type="button" onClick={handleRestart} className="btn">
-          restart
-        </button>
-      </div>
+
+      {Boolean(time) && (
+        <div className="form">
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onKeyUp={handleOnKeyUp}
+            onChange={handleInput}
+          />
+          <button type="button" onClick={handleRestart} className="btn">
+            restart
+          </button>
+        </div>
+      )}
 
       <div className="finished-test">
         <h2>Se finalizo el tiempo</h2>

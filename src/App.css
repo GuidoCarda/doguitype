@@ -16,7 +16,6 @@
 .text-container {
   max-height: 7rem;
   overflow-y: hidden;
-  /* border: 2px solid white; */
   width: min(90vw, 800px);
   margin-inline: auto;
   margin-block: 2rem;
