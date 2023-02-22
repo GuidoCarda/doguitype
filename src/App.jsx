@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
@@ -9,19 +9,20 @@ const sampleText =
 function App() {
   const [input, setInput] = useState("");
   const [words, setWords] = useState(new Map());
-
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
+  const [time, setTime] = useState(0);
+  const [timerState, setTimerState] = useState("paused");
+
   const inputRef = useRef(null);
   const currWordRef = useRef(null);
   const fetchRun = useRef(false);
-  const [time, setTime] = useState(timeBounds.minute);
 
-  // console.log(words);
   // Countdown timer
   useEffect(() => {
     if (time === 0) return;
+    if (timerState === "paused") return;
 
     const timeout = setTimeout(() => {
       setTime((time) => time - 1);
@@ -33,12 +34,6 @@ function App() {
   useEffect(() => {
     setInputFocus();
   }, []);
-
-  useEffect(() => {
-    if (currentWordIndex === words.length - 1) {
-      handleRestart();
-    }
-  }, [currentWordIndex, words]);
 
   useEffect(() => {
     if (!words.size) return;
@@ -60,17 +55,20 @@ function App() {
       });
 
       setWords(wordsCopy);
-      // setCurrentWordIndex();
     }
   }, [currWordRef.current]);
 
   const fetchWords = async () => {
-    return fetch("https://random-word-api.herokuapp.com/word?number=100")
-      .then((res) => res.json())
-      .then((data) => data);
+    const res = await fetch(
+      "https://random-word-api.herokuapp.com/word?number=100"
+    );
+    const data = await res.json();
+    return data;
   };
 
   useEffect(() => {
+    if (fetchRun.current) return;
+
     fetchWords().then((data) => {
       setWords(() => {
         const map = new Map();
@@ -84,31 +82,23 @@ function App() {
     };
   }, []);
 
-  const setInputFocus = () => {
-    inputRef.current.focus();
-  };
-
-  const handleRestart = () => {
-    setCurrentWordIndex(0);
-    setCharCount(0);
-    setInput("");
-    setInputFocus();
-    setWords(sampleText.split(" "));
-  };
+  const setInputFocus = () => inputRef.current.focus();
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
-
     setInput(inputValue);
   };
 
   const handleOnKeyUp = (e) => {
     const pressedKeyCode = e.keyCode;
 
-    if (pressedKeyCode === 32) {
-      console.log(currWordRef);
+    if (currentWordIndex === 0 && input.length === 1) {
+      setTime(timeBounds.minute);
+      setTimerState("playing");
+    }
 
-      if (!checkCharEquality(input, words.get(currentWordIndex))) {
+    if (pressedKeyCode === 32) {
+      if (!checkStringEquality(input, words.get(currentWordIndex))) {
         SetIncorrectWords(incorrectWords.add(currentWordIndex));
       }
 
@@ -141,76 +131,70 @@ function App() {
         <span>Written Characters count: {charCount}</span>
         <span>Current word idx: {currentWordIndex}</span>
       </div>
-
-      {Boolean(time) && (
-        <div className="text-container sample-text">
-          <div className="words">
-            {words.size !== 0 &&
-              [...words.entries()].map((entry, idx) => {
-                const [id, word] = entry;
-                if (currentWordIndex === id) {
-                  return (
-                    <div
-                      ref={currWordRef}
-                      className={`word active ${
-                        isInputMatching ? "correct" : "incorrect"
-                      }`}
-                      key={idx}
-                      id={id}
-                    >
-                      {word}
-                    </div>
-                  );
-                }
-
-                if (currentWordIndex > id) {
-                  return (
-                    <div
-                      className={`word ${
-                        incorrectWords.has(idx) ? "incorrect" : "correct"
-                      }`}
-                      key={idx}
-                      id={id}
-                    >
-                      {word}
-                    </div>
-                  );
-                }
-
+      <div className="text-container sample-text">
+        <div className="words">
+          {words.size !== 0 &&
+            [...words.entries()].map((entry, idx) => {
+              const [id, word] = entry;
+              if (currentWordIndex === id) {
                 return (
-                  <div className={`word`} key={idx} id={id}>
+                  <div
+                    ref={currWordRef}
+                    className={`word active ${
+                      isInputMatching ? "correct" : "incorrect"
+                    }`}
+                    key={idx}
+                    id={id}
+                  >
                     {word}
                   </div>
                 );
-              })}
-          </div>
-        </div>
-      )}
+              }
 
-      {!Boolean(time) && (
+              if (currentWordIndex > id) {
+                return (
+                  <div
+                    className={`word ${
+                      incorrectWords.has(idx) ? "incorrect" : "correct"
+                    }`}
+                    key={idx}
+                    id={id}
+                  >
+                    {word}
+                  </div>
+                );
+              }
+
+              return (
+                <div className={`word`} key={idx} id={id}>
+                  {word}
+                </div>
+              );
+            })}
+        </div>
+      </div>
+
+      {!Boolean(time) && timerState !== "paused" && (
         <div className="result">
           <h2>Current WPM: {calculateWPM()}</h2>
         </div>
       )}
-
-      {Boolean(time) && (
-        <div className="form">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onKeyUp={handleOnKeyUp}
-            onChange={handleInput}
-          />
-          <button type="button" onClick={handleRestart} className="btn">
-            restart
-          </button>
-        </div>
-      )}
+      <div className="form">
+        <input
+          ref={inputRef}
+          type="text"
+          value={input}
+          onKeyUp={handleOnKeyUp}
+          onChange={handleInput}
+        />
+        <button type="button" className="btn">
+          restart
+        </button>
+      </div>
 
       <div className="finished-test">
         <h2>Se finalizo el tiempo</h2>
-        <button type="button" onClick={handleRestart} className="btn">
+        <button type="button" className="btn">
           restart
         </button>
       </div>
