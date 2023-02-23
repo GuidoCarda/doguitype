@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
+import { RxReload } from "react-icons/rx";
+import { BsKeyboardFill } from "react-icons/bs";
+
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
 
 function App() {
@@ -133,95 +136,103 @@ function App() {
 
   return (
     <div className="App">
-      <div className="temporary-data">
+      <header className="nav-bar">
+        <div className="nav-logo">
+          <BsKeyboardFill />
+          <span>doguitype</span>
+        </div>
+      </header>
+      {/* <div className="temporary-data">
         <h3>Left time: {timer.time} seconds</h3>
         <span>Current Input: {input}</span>
         <span>Current Word: {words[currentWordIndex]}</span>
         <span>Current Words: {words.length}</span>
         <span>Written Characters count: {charCount}</span>
         <span>Current word idx: {currentWordIndex}</span>
-      </div>
+      </div> */}
 
-      <div className="text-container sample-text">
-        {isLoading ? (
-          <h1>loading...</h1>
-        ) : (
-          <div className="words">
-            {words.size !== 0 &&
-              [...words.entries()].map((entry, idx) => {
-                const [id, word] = entry;
-                if (currentWordIndex === id) {
+      <div className="test">
+        <div className="text-container sample-text">
+          {isLoading ? (
+            <h1>loading...</h1>
+          ) : (
+            <div className="words">
+              {words.size !== 0 &&
+                [...words.entries()].map((entry, idx) => {
+                  const [id, word] = entry;
+                  if (currentWordIndex === id) {
+                    return (
+                      <div
+                        ref={currWordRef}
+                        className={`word active ${
+                          input.length
+                            ? isInputMatching()
+                              ? "correct"
+                              : "incorrect"
+                            : ""
+                        }`}
+                        key={idx}
+                        id={id}
+                      >
+                        {word}
+                      </div>
+                    );
+                  }
+
+                  if (currentWordIndex > id) {
+                    return (
+                      <div
+                        className={`word ${
+                          incorrectWords.has(idx) ? "incorrect" : "correct"
+                        }`}
+                        key={idx}
+                        id={id}
+                      >
+                        {word}
+                      </div>
+                    );
+                  }
+
                   return (
-                    <div
-                      ref={currWordRef}
-                      className={`word active ${
-                        input.length
-                          ? isInputMatching()
-                            ? "correct"
-                            : "incorrect"
-                          : ""
-                      }`}
-                      key={idx}
-                      id={id}
-                    >
+                    <div className={`word`} key={idx} id={id}>
                       {word}
                     </div>
                   );
-                }
+                })}
+            </div>
+          )}
+        </div>
 
-                if (currentWordIndex > id) {
-                  return (
-                    <div
-                      className={`word ${
-                        incorrectWords.has(idx) ? "incorrect" : "correct"
-                      }`}
-                      key={idx}
-                      id={id}
-                    >
-                      {word}
-                    </div>
-                  );
-                }
+        {!Boolean(timer.time) && timer.state === "finished" && (
+          <div className="result">
+            <h2>Current WPM: {calculateWPM(charCount)}</h2>
+          </div>
+        )}
+        <div className="form">
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onKeyUp={handleOnKeyUp}
+            onChange={handleInput}
+            disabled={isLoading || timer.state === "finished"}
+          />
+          {timer.time !== 0 && timer.state === "playing" && (
+            <button type="button" onClick={handleRestart} className="btn">
+              <RxReload />
+            </button>
+          )}
+        </div>
 
-                return (
-                  <div className={`word`} key={idx} id={id}>
-                    {word}
-                  </div>
-                );
-              })}
+        {!Boolean(timer.time) && timer.state === "finished" && (
+          <div className="finished-test">
+            <h2>Se finalizo el tiempo</h2>
+            <button type="button" className="btn" onClick={handleRestart}>
+              <RxReload />
+            </button>
           </div>
         )}
       </div>
-
-      {!Boolean(timer.time) && timer.state === "finished" && (
-        <div className="result">
-          <h2>Current WPM: {calculateWPM(charCount)}</h2>
-        </div>
-      )}
-      <div className="form">
-        <input
-          ref={inputRef}
-          type="text"
-          value={input}
-          onKeyUp={handleOnKeyUp}
-          onChange={handleInput}
-          disabled={isLoading || timer.state === "finished"}
-        />
-        {timer.time !== 0 && timer.state === "playing" && (
-          <button type="button" onClick={handleRestart} className="btn">
-            restart
-          </button>
-        )}
-      </div>
-
-      {!Boolean(timer.time) && (
-        <div className="finished-test">
-          <h2>Se finalizo el tiempo</h2>
-          <button type="button" className="btn" onClick={handleRestart}>
-            restart
-          </button>
-        </div>
-      )}
     </div>
   );
 }

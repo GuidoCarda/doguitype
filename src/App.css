@@ -13,6 +13,31 @@
   text-align: center;
 }
 
+.nav-bar {
+  width: min(90vw, 800px);
+  margin-inline: auto;
+  height: 3rem;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: rgb(229, 229, 229);
+}
+
+.nav-logo > svg {
+  font-size: 1.5rem;
+  color: rgb(123, 123, 150);
+}
+
+.test {
+  min-height: calc(100vh - 10rem);
+  display: grid;
+  place-content: center;
+}
+
 .text-container {
   height: 7rem;
   overflow-y: hidden;
@@ -45,7 +70,6 @@
 
 input {
   height: 3rem;
-  flex: 1;
   border-radius: 0.5rem;
   padding-inline: 1rem;
   font-family: inherit;
@@ -110,6 +134,7 @@ input.invisible {
 
 .form {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
   margin-inline: auto;
   justify-content: center;
