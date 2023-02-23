@@ -9,8 +9,8 @@ function App() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
-  const [time, setTime] = useState(0);
-  const [timerState, setTimerState] = useState("paused");
+  const [timer, setTimer] = useState({ time: 0, state: "paused" });
+  const [isLoading, setIsLoading] = useState(true);
 
   const inputRef = useRef(null);
   const currWordRef = useRef(null);
@@ -18,22 +18,29 @@ function App() {
 
   // Countdown timer
   useEffect(() => {
-    if (time === 0) return;
-    if (timerState === "paused") return;
+    console.log(timer.state);
+    if (timer.state !== "playing") return;
+
+    if (timer.time === 0 && timer.state === "playing") {
+      setTimer({ ...timer, state: "finished" });
+      setInput("");
+      return;
+    }
 
     const timeout = setTimeout(() => {
-      setTime((time) => time - 1);
+      setTimer((timer) => ({ ...timer, time: timer.time - 1 }));
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [time]);
+  }, [timer]);
 
   useEffect(() => {
     setInputFocus();
-  }, []);
+  }, [isLoading]);
 
+  //Move showing words when reached 2nd line
   useEffect(() => {
-    if (!words.size) return;
+    if (!words.size || timer.time === 0) return;
     if (
       currWordRef?.current.offsetTop >= 35 &&
       currWordRef?.current.offsetLeft === 0
@@ -67,17 +74,20 @@ function App() {
     if (fetchRun.current) return;
 
     fetchWords().then((data) => {
-      setWords(() => {
-        const map = new Map();
-        data.forEach((word, idx) => map.set(idx, word));
-        return map;
-      });
+      setWords(parseData(data));
+      setIsLoading(false);
     });
 
     return () => {
       fetchRun.current = true;
     };
   }, []);
+
+  const parseData = (data) => {
+    const map = new Map();
+    data.forEach((word, idx) => map.set(idx, word));
+    return map;
+  };
 
   const setInputFocus = () => inputRef.current.focus();
 
@@ -89,9 +99,9 @@ function App() {
   const handleOnKeyUp = (e) => {
     const pressedKeyCode = e.keyCode;
 
-    if (currentWordIndex === 0 && input.length === 1) {
-      setTime(timeBounds.minute);
-      setTimerState("playing");
+    console.log(currentWordIndex, input.length);
+    if (currentWordIndex === 0 && timer.state === "paused") {
+      setTimer({ time: timeBounds.minute, state: "playing" });
     }
 
     if (pressedKeyCode === 32) {
@@ -105,68 +115,85 @@ function App() {
     }
   };
 
-  // console.log(currentWordIndex);
-  const isInputMatching =
-    words.size && words.get(currentWordIndex).includes(input);
+  const isInputMatching = () => words.get(currentWordIndex).includes(input);
+
+  const handleRestart = () => {
+    setCurrentWordIndex(0);
+    setTimer({ time: 0, state: "paused" });
+    setCharCount(0);
+    SetIncorrectWords(new Set());
+    setInputFocus();
+    setInput("");
+    setIsLoading(true);
+    fetchWords().then((data) => {
+      setWords(parseData(data));
+      setIsLoading(false);
+    });
+  };
 
   return (
     <div className="App">
       <div className="temporary-data">
-        <h3>Left time: {time} seconds</h3>
+        <h3>Left time: {timer.time} seconds</h3>
         <span>Current Input: {input}</span>
         <span>Current Word: {words[currentWordIndex]}</span>
         <span>Current Words: {words.length}</span>
         <span>Written Characters count: {charCount}</span>
         <span>Current word idx: {currentWordIndex}</span>
       </div>
+
       <div className="text-container sample-text">
-        <div className="words">
-          {words.size !== 0 &&
-            [...words.entries()].map((entry, idx) => {
-              const [id, word] = entry;
-              if (currentWordIndex === id) {
+        {isLoading ? (
+          <h1>loading...</h1>
+        ) : (
+          <div className="words">
+            {words.size !== 0 &&
+              [...words.entries()].map((entry, idx) => {
+                const [id, word] = entry;
+                if (currentWordIndex === id) {
+                  return (
+                    <div
+                      ref={currWordRef}
+                      className={`word active ${
+                        input.length
+                          ? isInputMatching()
+                            ? "correct"
+                            : "incorrect"
+                          : ""
+                      }`}
+                      key={idx}
+                      id={id}
+                    >
+                      {word}
+                    </div>
+                  );
+                }
+
+                if (currentWordIndex > id) {
+                  return (
+                    <div
+                      className={`word ${
+                        incorrectWords.has(idx) ? "incorrect" : "correct"
+                      }`}
+                      key={idx}
+                      id={id}
+                    >
+                      {word}
+                    </div>
+                  );
+                }
+
                 return (
-                  <div
-                    ref={currWordRef}
-                    className={`word active ${
-                      input.length
-                        ? isInputMatching
-                          ? "correct"
-                          : "incorrect"
-                        : ""
-                    }`}
-                    key={idx}
-                    id={id}
-                  >
+                  <div className={`word`} key={idx} id={id}>
                     {word}
                   </div>
                 );
-              }
-
-              if (currentWordIndex > id) {
-                return (
-                  <div
-                    className={`word ${
-                      incorrectWords.has(idx) ? "incorrect" : "correct"
-                    }`}
-                    key={idx}
-                    id={id}
-                  >
-                    {word}
-                  </div>
-                );
-              }
-
-              return (
-                <div className={`word`} key={idx} id={id}>
-                  {word}
-                </div>
-              );
-            })}
-        </div>
+              })}
+          </div>
+        )}
       </div>
 
-      {!Boolean(time) && timerState !== "paused" && (
+      {!Boolean(timer.time) && timer.state === "finished" && (
         <div className="result">
           <h2>Current WPM: {calculateWPM(charCount)}</h2>
         </div>
@@ -178,18 +205,23 @@ function App() {
           value={input}
           onKeyUp={handleOnKeyUp}
           onChange={handleInput}
+          disabled={isLoading || timer.state === "finished"}
         />
-        <button type="button" className="btn">
-          restart
-        </button>
+        {timer.time !== 0 && timer.state === "playing" && (
+          <button type="button" onClick={handleRestart} className="btn">
+            restart
+          </button>
+        )}
       </div>
 
-      <div className="finished-test">
-        <h2>Se finalizo el tiempo</h2>
-        <button type="button" className="btn">
-          restart
-        </button>
-      </div>
+      {!Boolean(timer.time) && (
+        <div className="finished-test">
+          <h2>Se finalizo el tiempo</h2>
+          <button type="button" className="btn" onClick={handleRestart}>
+            restart
+          </button>
+        </div>
+      )}
     </div>
   );
 }
