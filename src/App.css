@@ -13,28 +13,51 @@
   text-align: center;
 }
 
-.text-container {
-  position: relative;
+.nav-bar {
   width: min(90vw, 800px);
   margin-inline: auto;
-  margin-block: 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-items: flex-start;
-  gap: 0.5rem;
+  height: 3rem;
 }
 
-.sample-text,
-.input-text {
-  font-size: 1.25rem;
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: rgb(229, 229, 229);
+}
+
+.nav-logo > svg {
+  font-size: 1.5rem;
   color: rgb(123, 123, 150);
 }
 
-.input-text {
-  color: white;
-  position: absolute;
-  top: 0;
-  left: 0;
+.test {
+  min-height: calc(100vh - 10rem);
+  display: grid;
+  place-content: center;
+}
+
+.text-container {
+  height: 7rem;
+  overflow-y: hidden;
+  width: min(90vw, 800px);
+  margin-inline: auto;
+  margin-block: 2rem;
+}
+
+.words {
+  position: relative;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-items: flex-start;
+  line-height: 2.2rem;
+}
+
+.sample-text {
+  font-size: 1.25rem;
+  color: rgb(123, 123, 150);
 }
 
 .input-text.no-match {
@@ -47,7 +70,6 @@
 
 input {
   height: 3rem;
-  flex: 1;
   border-radius: 0.5rem;
   padding-inline: 1rem;
   font-family: inherit;
@@ -62,34 +84,29 @@ input.invisible {
 
 .word {
   user-select: none;
-
   border-radius: 0.3rem;
+  padding: 0 0.3rem;
 }
 
 .word.active {
   color: rgb(229, 229, 229);
-}
-
-.word.correct {
-  color: rgb(34, 184, 62);
-  color: rgb(229, 229, 229);
-}
-
-.word.active.correct {
-  color: rgb(34, 184, 62);
+  background: rgb(44, 44, 44);
 }
 
 .word.active.incorrect {
   color: rgb(184, 44, 34);
 }
 
+.word.active.correct {
+  color: rgb(78, 183, 101);
+}
+
 .word.incorrect {
   color: rgb(184, 44, 34);
 }
 
-.word.active.error {
-  color: rgb(184, 76, 76);
-  text-decoration: underline;
+.word.correct {
+  color: rgb(229, 229, 229);
 }
 
 .word > .correct {
@@ -97,7 +114,8 @@ input.invisible {
 }
 
 .word > .incorrect {
-  color: rgb(184, 121, 34);
+  color: rgb(184, 44, 34);
+  text-decoration: underline;
 }
 
 .temporary-data {
@@ -116,6 +134,7 @@ input.invisible {
 
 .form {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
   margin-inline: auto;
   justify-content: center;
@@ -149,4 +168,21 @@ input.invisible {
 
 .btn:focus {
   outline-color: rgba(219, 148, 77, 0.379);
+}
+
+.finished-test {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.result {
+  margin-top: 2rem;
+  background: hsl(130, 47%, 36%);
+  border-radius: 0.3rem;
+  width: max-content;
+  margin-inline: auto;
+  padding: 0.25rem 1rem;
 }

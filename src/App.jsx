@@ -1,109 +1,237 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
-const sampleText =
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima incidunt magni qui cumque rem labore facere, facilis doloribus perspiciatis ipsa vitae similique voluptatem inventore blanditiis fuga? Libero est maxime ";
+import { RxReload } from "react-icons/rx";
+import { BsKeyboardFill } from "react-icons/bs";
+
+const timeBounds = { cuarter: 15, half: 30, minute: 60 };
+
 function App() {
   const [input, setInput] = useState("");
-  const words = sampleText.split(" ");
+  const [words, setWords] = useState(new Map());
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [time, setTime] = useState(60);
-  const [incorrectWords, SetIncorrectWords] = useState([]);
-  const inputRef = useRef();
+  const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
+  const [charCount, setCharCount] = useState(0);
+  const [timer, setTimer] = useState({ time: 0, state: "paused" });
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    setInputFocus();
-  }, []);
-
-  useEffect(() => {
-    if (currentWordIndex === words.length - 1) {
-      handleRestart();
-    }
-  }, [currentWordIndex, words]);
+  const inputRef = useRef(null);
+  const currWordRef = useRef(null);
+  const fetchRun = useRef(false);
 
   // Countdown timer
   useEffect(() => {
-    if (time === 0) return;
+    console.log(timer.state);
+    if (timer.state !== "playing") return;
+
+    if (timer.time === 0 && timer.state === "playing") {
+      setTimer({ ...timer, state: "finished" });
+      setInput("");
+      return;
+    }
 
     const timeout = setTimeout(() => {
-      setTime((time) => time - 1);
+      setTimer((timer) => ({ ...timer, time: timer.time - 1 }));
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [time]);
+  }, [timer]);
 
-  const setInputFocus = () => {
-    inputRef.current.focus();
-  };
-
-  const handleRestart = () => {
-    setCurrentWordIndex(0);
-    setInput("");
+  useEffect(() => {
     setInputFocus();
-    setWords(sampleText.split(" "));
+  }, [isLoading]);
+
+  //Move showing words when reached 2nd line
+  useEffect(() => {
+    if (!words.size || timer.time === 0) return;
+    if (
+      currWordRef?.current.offsetTop >= 35 &&
+      currWordRef?.current.offsetLeft === 0
+    ) {
+      console.log(currWordRef?.current.offsetTop);
+      const currWordIdx = currWordRef?.current.id;
+
+      console.log("move showed words");
+
+      const wordsCopy = new Map(words);
+
+      wordsCopy.forEach((value, idx) => {
+        if (idx < currWordIdx) {
+          wordsCopy.delete(idx);
+        }
+      });
+
+      setWords(wordsCopy);
+    }
+  }, [currWordRef.current]);
+
+  const fetchWords = async () => {
+    const res = await fetch(
+      "https://random-word-api.herokuapp.com/word?number=100"
+    );
+    const data = await res.json();
+    return data;
   };
+
+  useEffect(() => {
+    if (fetchRun.current) return;
+
+    fetchWords().then((data) => {
+      setWords(parseData(data));
+      setIsLoading(false);
+    });
+
+    return () => {
+      fetchRun.current = true;
+    };
+  }, []);
+
+  const parseData = (data) => {
+    const map = new Map();
+    data.forEach((word, idx) => map.set(idx, word));
+    return map;
+  };
+
+  const setInputFocus = () => inputRef.current.focus();
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
-
     setInput(inputValue);
   };
 
   const handleOnKeyUp = (e) => {
     const pressedKeyCode = e.keyCode;
 
+    console.log(currentWordIndex, input.length);
+    if (currentWordIndex === 0 && timer.state === "paused") {
+      setTimer({ time: timeBounds.minute, state: "playing" });
+    }
+
     if (pressedKeyCode === 32) {
-      if (!checkCharEquality(input, words[currentWordIndex])) {
-        SetIncorrectWords(incorrectWords.concat(currentWordIndex));
+      if (!checkStringEquality(input, words.get(currentWordIndex))) {
+        SetIncorrectWords(incorrectWords.add(currentWordIndex));
       }
+
+      setCharCount((prevCount) => prevCount + input.length);
       setCurrentWordIndex((prev) => prev + 1);
       setInput("");
     }
   };
 
-  const checkCharEquality = (char1, char2) => char1 === char2;
-  const checkStringEquality = (str1, str2) => str1 === str2;
+  const isInputMatching = () => words.get(currentWordIndex).includes(input);
+
+  const handleRestart = () => {
+    setCurrentWordIndex(0);
+    setTimer({ time: 0, state: "paused" });
+    setCharCount(0);
+    SetIncorrectWords(new Set());
+    setInputFocus();
+    setInput("");
+    setIsLoading(true);
+    fetchWords().then((data) => {
+      setWords(parseData(data));
+      setIsLoading(false);
+    });
+  };
 
   return (
     <div className="App">
-      <div className="temporary-data">
-        <h2>Time: {time}</h2>
+      <header className="nav-bar">
+        <div className="nav-logo">
+          <BsKeyboardFill />
+          <span>doguitype</span>
+        </div>
+      </header>
+      {/* <div className="temporary-data">
+        <h3>Left time: {timer.time} seconds</h3>
         <span>Current Input: {input}</span>
         <span>Current Word: {words[currentWordIndex]}</span>
         <span>Current Words: {words.length}</span>
-        {/* {input.length ? (
-          <span>{inputMatches ? "match" : "no-match"}</span>
-        ) : (
-          <span>Empty</span>
-        )} */}
-
+        <span>Written Characters count: {charCount}</span>
         <span>Current word idx: {currentWordIndex}</span>
-      </div>
+      </div> */}
 
-      <div className="text-container sample-text">
-        {words.length != 0 &&
-          words.map((word, idx) => (
-            <Word
-              word={word}
-              key={idx}
-              input={input}
-              currentWordIndex={currentWordIndex}
-              status={incorrectWords.includes(idx) ? "incorrect" : "correct"}
-              idx={idx}
-            />
-          ))}
-      </div>
-      <div className="form">
-        <input
-          ref={inputRef}
-          type="text"
-          value={input}
-          onKeyUp={handleOnKeyUp}
-          onChange={handleInput}
-        />
-        <button type="button" onClick={handleRestart} className="btn">
-          restart
-        </button>
+      <div className="test">
+        <div className="text-container sample-text">
+          {isLoading ? (
+            <h1>loading...</h1>
+          ) : (
+            <div className="words">
+              {words.size !== 0 &&
+                [...words.entries()].map((entry, idx) => {
+                  const [id, word] = entry;
+                  if (currentWordIndex === id) {
+                    return (
+                      <div
+                        ref={currWordRef}
+                        className={`word active ${
+                          input.length
+                            ? isInputMatching()
+                              ? "correct"
+                              : "incorrect"
+                            : ""
+                        }`}
+                        key={idx}
+                        id={id}
+                      >
+                        {word}
+                      </div>
+                    );
+                  }
+
+                  if (currentWordIndex > id) {
+                    return (
+                      <div
+                        className={`word ${
+                          incorrectWords.has(idx) ? "incorrect" : "correct"
+                        }`}
+                        key={idx}
+                        id={id}
+                      >
+                        {word}
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className={`word`} key={idx} id={id}>
+                      {word}
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </div>
+
+        {!Boolean(timer.time) && timer.state === "finished" && (
+          <div className="result">
+            <h2>Current WPM: {calculateWPM(charCount)}</h2>
+          </div>
+        )}
+        <div className="form">
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onKeyUp={handleOnKeyUp}
+            onChange={handleInput}
+            disabled={isLoading || timer.state === "finished"}
+          />
+          {timer.time !== 0 && timer.state === "playing" && (
+            <button type="button" onClick={handleRestart} className="btn">
+              <RxReload />
+            </button>
+          )}
+        </div>
+
+        {!Boolean(timer.time) && timer.state === "finished" && (
+          <div className="finished-test">
+            <h2>Se finalizo el tiempo</h2>
+            <button type="button" className="btn" onClick={handleRestart}>
+              <RxReload />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -111,24 +239,7 @@ function App() {
 
 export default App;
 
-function Word({ word, input, currentWordIndex, idx, status }) {
-  const matchingState = word.includes(input.trim()) ? "correct" : "incorrect";
+const calculateWPM = (charCount) => charCount / 5 / 1;
 
-  return (
-    <div
-      className={`word ${
-        currentWordIndex === idx && input.length === 0
-          ? "active"
-          : currentWordIndex === idx && input.length > 0
-          ? `active ${matchingState}`
-          : ""
-      } ${currentWordIndex > idx ? status : ""}`}
-    >
-      {[...word].map((letter, idx) => (
-        <span key={idx}>{letter}</span>
-      ))}
-    </div>
-  );
-}
-
-// ${currentWordIndex === idx ? "active" : ""}
+const checkCharEquality = (char1, char2) => char1 === char2;
+const checkStringEquality = (str1, str2) => str1 === str2;
