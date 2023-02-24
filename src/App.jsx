@@ -118,7 +118,9 @@ function App() {
     }
   };
 
-  const isInputMatching = () => words.get(currentWordIndex).includes(input);
+  const isInputMatching = () => {
+    return words.get(currentWordIndex).slice(0, input.length) === input;
+  };
 
   const handleRestart = () => {
     setCurrentWordIndex(0);
@@ -160,6 +162,7 @@ function App() {
               {words.size !== 0 &&
                 [...words.entries()].map((entry, idx) => {
                   const [id, word] = entry;
+
                   if (currentWordIndex === id) {
                     return (
                       <div
@@ -183,7 +186,7 @@ function App() {
                     return (
                       <div
                         className={`word ${
-                          incorrectWords.has(idx) ? "incorrect" : "correct"
+                          incorrectWords.has(id) ? "incorrect" : "correct"
                         }`}
                         key={idx}
                         id={id}
