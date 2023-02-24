@@ -32,10 +32,29 @@
   color: rgb(123, 123, 150);
 }
 
-.test {
+.test,
+.finished-test {
   min-height: calc(100vh - 10rem);
   display: grid;
   place-content: center;
+  /* border: 2px solid red; */
+}
+
+.test .timer-container {
+  height: 2rem;
+  position: relative;
+  display: block;
+
+  top: 1.5rem;
+  left: 0.2rem;
+
+  justify-self: start;
+}
+
+.test .timer {
+  color: rgb(218, 148, 77);
+  font-size: 1.25rem;
+  font-weight: 500;
 }
 
 .text-container {
@@ -160,6 +179,10 @@ input.invisible {
 
   background-color: rgb(218, 148, 77);
   color: hsl(30, 66%, 20%);
+}
+
+.btn.restart-btn {
+  margin-inline: auto;
 }
 
 .btn:hover {
