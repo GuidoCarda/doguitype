@@ -6,17 +6,31 @@
   margin: 0;
 }
 
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.container {
+  min-height: 100vh;
+  width: min(90vw, 960px);
+  margin-inline: auto;
+  /* border: 2px solid white; */
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 1.5rem;
+}
+
+.nav-bar,
+.footer {
+  height: 4rem;
+  display: flex;
+  align-items: center;
 }
 
 .nav-bar {
-  width: min(90vw, 800px);
-  margin-inline: auto;
-  height: 3rem;
+  /* border: 2px solid green; */
+}
+
+.footer {
+  /* border: 2px solid red; */
+  justify-content: center;
+  color: rgb(160, 165, 183);
 }
 
 .nav-logo {
@@ -32,12 +46,14 @@
   color: rgb(123, 123, 150);
 }
 
+.test {
+  /* border: 2px solid blue; */
+}
+
 .test,
 .finished-test {
-  min-height: calc(100vh - 10rem);
   display: grid;
   place-content: center;
-  /* border: 2px solid red; */
 }
 
 .test .timer-container {
@@ -60,9 +76,9 @@
 .text-container {
   height: 7rem;
   overflow-y: hidden;
-  width: min(90vw, 800px);
-  margin-inline: auto;
   margin-block: 2rem;
+  font-size: 1.5rem;
+  color: rgb(123, 123, 150);
 }
 
 .words {
@@ -72,11 +88,6 @@
   flex-wrap: wrap;
   justify-items: flex-start;
   line-height: 2.2rem;
-}
-
-.sample-text {
-  font-size: 1.25rem;
-  color: rgb(123, 123, 150);
 }
 
 .input-text.no-match {
@@ -152,12 +163,13 @@ input.invisible {
 }
 
 .form {
+  width: 100%;
+  margin-inline: auto;
+
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-inline: auto;
   justify-content: center;
-  width: min(90vw, 800px);
 }
 
 .btn {

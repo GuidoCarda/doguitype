@@ -3,6 +3,8 @@ import "./App.css";
 
 import { RxReload } from "react-icons/rx";
 import Navbar from "./components/Navbar";
+import Result from "./components/Result";
+import Footer from "./components/Footer";
 
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
 
@@ -138,7 +140,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="container">
       <Navbar />
 
       {timer.state !== "finished" && (
@@ -149,7 +151,7 @@ function App() {
             )}
           </div>
 
-          <div className="text-container sample-text">
+          <div className="text-container">
             {isLoading ? (
               <h1>loading...</h1>
             ) : (
@@ -220,30 +222,19 @@ function App() {
           </div>
         </div>
       )}
+
       {!Boolean(timer.time) && timer.state === "finished" && (
-        <div className="finished-test">
-          <h2>Se finalizo el tiempo</h2>
-          {!Boolean(timer.time) && timer.state === "finished" && (
-            <div className="result">
-              <h2>Current WPM: {calculateWPM(charCount)}</h2>
-            </div>
-          )}
-          <button
-            type="button"
-            className="btn reset-btn"
-            onClick={handleRestart}
-          >
-            <RxReload />
-          </button>
-        </div>
+        <Result charCount={charCount} handleRestart={handleRestart} />
       )}
+
+      <Footer />
     </div>
   );
 }
 
 export default App;
 
-const calculateWPM = (charCount) => charCount / 5 / 1;
+export const calculateWPM = (charCount) => charCount / 5 / 1;
 
 const checkCharEquality = (char1, char2) => char1 === char2;
 const checkStringEquality = (str1, str2) => str1 === str2;
