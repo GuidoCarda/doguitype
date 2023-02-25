@@ -222,3 +222,29 @@ input.invisible {
   margin-inline: auto;
   padding: 0.25rem 1rem;
 }
+
+.mode-selector-container {
+  width: 100%;
+  height: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.mode-selector-container button {
+  height: 2rem;
+  font-family: inherit;
+  font-size: 1rem;
+  padding-inline: 1rem;
+  outline: none;
+  border: none;
+}
+
+.mode-selector-container > div {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mode-selector-container > div button.selected {
+  background-color: rgb(218, 148, 77);
+}

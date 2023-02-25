@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Result from "./components/Result";
 import Footer from "./components/Footer";
 import { dummyData } from "./data";
+import ModeSelector from "./components/ModeSelector";
 
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
 
@@ -15,7 +16,11 @@ function App() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
-  const [timer, setTimer] = useState({ time: 0, state: "paused" });
+  const [timer, setTimer] = useState({
+    timeBound: 60,
+    time: 0,
+    state: "paused",
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   const inputRef = useRef(null);
@@ -120,7 +125,7 @@ function App() {
 
     console.log(currentWordIndex, input.length);
     if (currentWordIndex === 0 && timer.state === "paused") {
-      setTimer({ time: timeBounds.minute, state: "playing" });
+      setTimer({ ...timer, time: Number(timer.timeBound), state: "playing" });
     }
 
     if (pressedKeyCode === 32) {
@@ -140,7 +145,7 @@ function App() {
 
   const handleRestart = () => {
     setCurrentWordIndex(0);
-    setTimer({ time: 0, state: "paused" });
+    setTimer({ ...timer, time: 0, state: "paused" });
     setCharCount(0);
     SetIncorrectWords(new Set());
     setInputFocus();
@@ -152,12 +157,23 @@ function App() {
     });
   };
 
+  const handleModeSelection = (mode) => {
+    setTimer({ ...timer, timeBound: Number(mode), time: Number(mode) });
+  };
+
   return (
     <div className="container">
       <Navbar />
 
       {timer.state !== "finished" && (
         <div className="test">
+          {timer.state === "paused" && (
+            <ModeSelector
+              handleModeSelection={handleModeSelection}
+              timer={timer}
+            />
+          )}
+
           <div className="timer-container">
             {timer.state === "playing" && (
               <span className="timer">{timer.time}</span>
