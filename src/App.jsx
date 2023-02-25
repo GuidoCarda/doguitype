@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 import { RxReload } from "react-icons/rx";
-import { BsKeyboardFill } from "react-icons/bs";
+import Navbar from "./components/Navbar";
 
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
 
@@ -139,20 +139,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="nav-bar">
-        <div className="nav-logo">
-          <BsKeyboardFill />
-          <span>doguitype</span>
-        </div>
-      </header>
-      {/* <div className="temporary-data">
-        <h3>Left time: {timer.time} seconds</h3>
-        <span>Current Input: {input}</span>
-        <span>Current Word: {words[currentWordIndex]}</span>
-        <span>Current Words: {words.length}</span>
-        <span>Written Characters count: {charCount}</span>
-        <span>Current word idx: {currentWordIndex}</span>
-      </div> */}
+      <Navbar />
 
       {timer.state !== "finished" && (
         <div className="test">
