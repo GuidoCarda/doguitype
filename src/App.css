@@ -36,13 +36,14 @@
 .nav-logo {
   display: flex;
   align-items: center;
+  font-size: 1.5rem;
   gap: 0.5rem;
   font-weight: 500;
   color: rgb(229, 229, 229);
 }
 
 .nav-logo > svg {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   color: rgb(123, 123, 150);
 }
 

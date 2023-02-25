@@ -5,6 +5,7 @@ import { RxReload } from "react-icons/rx";
 import Navbar from "./components/Navbar";
 import Result from "./components/Result";
 import Footer from "./components/Footer";
+import { dummyData } from "./data";
 
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
 
@@ -78,10 +79,22 @@ function App() {
   useEffect(() => {
     if (fetchRun.current) return;
 
-    fetchWords().then((data) => {
-      setWords(parseData(data));
+    setTimeout(() => {
       setIsLoading(false);
-    });
+
+      return setWords(
+        parseData(
+          dummyData[
+            Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
+          ].split(" ")
+        )
+      );
+    }, 1000);
+
+    // fetchWords().then((data) => {
+    //   setWords(parseData(data));
+    //   setIsLoading(false);
+    // });
 
     return () => {
       fetchRun.current = true;
@@ -150,7 +163,6 @@ function App() {
               <span className="timer">{timer.time}</span>
             )}
           </div>
-
           <div className="text-container">
             {isLoading ? (
               <h1>loading...</h1>
