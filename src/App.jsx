@@ -123,7 +123,8 @@ function App() {
   const handleOnKeyUp = (e) => {
     const pressedKeyCode = e.keyCode;
 
-    console.log(currentWordIndex, input.length);
+    if (pressedKeyCode === 9) return;
+
     if (currentWordIndex === 0 && timer.state === "paused") {
       setTimer({ ...timer, time: Number(timer.timeBound), state: "playing" });
     }
