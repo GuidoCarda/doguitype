@@ -161,6 +161,10 @@ input {
   border: none;
 }
 
+input:disabled {
+  cursor: not-allowed;
+}
+
 input.invisible {
   visibility: hidden;
 }
@@ -188,6 +192,11 @@ input.invisible {
 
 .btn.restart-btn {
   margin-inline: auto;
+}
+
+.btn.restart-btn:disabled {
+  cursor: not-allowed;
+  filter: grayscale(10);
 }
 
 .btn:hover {

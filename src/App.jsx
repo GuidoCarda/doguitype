@@ -51,7 +51,7 @@ function App() {
 
   //Move showing words when reached 2nd line
   useEffect(() => {
-    if (!words.size || timer.time === 0) return;
+    if (!words.size || timer.time === 0 || isLoading) return;
     if (
       currWordRef?.current.offsetTop >= 35 &&
       currWordRef?.current.offsetLeft === 0
@@ -102,6 +102,7 @@ function App() {
     // });
 
     return () => {
+      // clearTimeout(id);
       fetchRun.current = true;
     };
   }, []);
@@ -260,6 +261,7 @@ function App() {
               type="button"
               onClick={handleRestart}
               className="btn restart-btn"
+              disabled={isLoading}
             >
               <RxReload />
             </button>
