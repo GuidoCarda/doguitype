@@ -1,6 +1,7 @@
 import React from "react";
 
 const timeBounds = ["15", "30", "60", "120"];
+const wordsBounds = ["10", "25", "50", "100"];
 
 const ModeSelector = ({ handleModeSelection, timer }) => {
   return (
