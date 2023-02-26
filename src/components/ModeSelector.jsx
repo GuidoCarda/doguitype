@@ -5,10 +5,10 @@ const modes = [
     type: "time",
     bounds: [15, 30, 60, 120],
   },
-  // {
-  //   type: "words",
-  //   bounds: [10, 25, 50, 100],
-  // },
+  {
+    type: "words",
+    bounds: [10, 25, 50, 100],
+  },
 ];
 
 const ModeSelector = ({ handleModeSelection, timer }) => {
@@ -20,6 +20,7 @@ const ModeSelector = ({ handleModeSelection, timer }) => {
         return (
           <button
             key={mode.type}
+            onClick={() => setSelectedMode(idx)}
             className={`${selectedMode === idx ? "selected" : ""} `}
           >
             {mode.type}

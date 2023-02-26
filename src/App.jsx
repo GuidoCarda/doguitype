@@ -11,6 +11,11 @@ import ModeSelector from "./components/ModeSelector";
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
 
 function App() {
+  const [currentMode, setCurrentMode] = useState({
+    type: "words",
+    bound: 15,
+  });
+
   const [input, setInput] = useState("");
   const [words, setWords] = useState(new Map());
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -26,6 +31,34 @@ function App() {
   const inputRef = useRef(null);
   const currWordRef = useRef(null);
   const fetchRun = useRef(false);
+
+  const fetchWords = async () => {
+    const res = await fetch(
+      "https://random-word-api.herokuapp.com/word?number=100"
+    );
+    const data = await res.json();
+    return data;
+  };
+
+  useEffect(() => {
+    if (fetchRun.current) return;
+
+    setTimeout(() => {
+      setIsLoading(false);
+
+      return setWords(parseData(getWords(15)));
+    }, 1000);
+
+    // fetchWords().then((data) => {
+    //   setWords(parseData(data));
+    //   setIsLoading(false);
+    // });
+
+    return () => {
+      // clearTimeout(id);
+      fetchRun.current = true;
+    };
+  }, []);
 
   // Countdown timer
   useEffect(() => {
@@ -59,8 +92,6 @@ function App() {
       console.log(currWordRef?.current.offsetTop);
       const currWordIdx = currWordRef?.current.id;
 
-      console.log("move showed words");
-
       const wordsCopy = new Map(words);
 
       wordsCopy.forEach((value, idx) => {
@@ -68,44 +99,31 @@ function App() {
           wordsCopy.delete(idx);
         }
       });
-
       setWords(wordsCopy);
     }
   }, [currWordRef.current]);
 
-  const fetchWords = async () => {
-    const res = await fetch(
-      "https://random-word-api.herokuapp.com/word?number=100"
+  const getWords = (wordsQty) => {
+    // if (currentMode === 0) {
+    //   return setWords(
+    //     parseData(
+    //       dummyData[
+    //         Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
+    //       ].split(" ")
+    //     )
+    //   );
+    // }
+
+    setWords(
+      parseData(
+        dummyData[
+          Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
+        ]
+          .split(" ")
+          .slice(0, wordsQty)
+      )
     );
-    const data = await res.json();
-    return data;
   };
-
-  useEffect(() => {
-    if (fetchRun.current) return;
-
-    setTimeout(() => {
-      setIsLoading(false);
-
-      return setWords(
-        parseData(
-          dummyData[
-            Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
-          ].split(" ")
-        )
-      );
-    }, 1000);
-
-    // fetchWords().then((data) => {
-    //   setWords(parseData(data));
-    //   setIsLoading(false);
-    // });
-
-    return () => {
-      // clearTimeout(id);
-      fetchRun.current = true;
-    };
-  }, []);
 
   const parseData = (data) => {
     const map = new Map();
@@ -114,7 +132,9 @@ function App() {
   };
 
   const setInputFocus = () =>
-    timer.state !== "finished" && inputRef.current.focus();
+    timer.state !== "finished" &&
+    currentWordIndex === currentMode.bound &&
+    inputRef.current.focus();
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
@@ -124,9 +144,16 @@ function App() {
   const handleOnKeyUp = (e) => {
     const pressedKeyCode = e.keyCode;
 
+    if (currentMode.type === "words") {
+    }
+
     if (pressedKeyCode === 9) return;
 
-    if (currentWordIndex === 0 && timer.state === "paused") {
+    if (
+      currentWordIndex === 0 &&
+      timer.state === "paused" &&
+      currentMode.type === "time"
+    ) {
       setTimer({ ...timer, time: Number(timer.timeBound), state: "playing" });
     }
 
@@ -162,13 +189,7 @@ function App() {
     setTimeout(() => {
       setIsLoading(false);
 
-      return setWords(
-        parseData(
-          dummyData[
-            Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
-          ].split(" ")
-        )
-      );
+      return setWords(parseData(getWords(15)));
     }, 1000);
   };
 
@@ -191,7 +212,7 @@ function App() {
           )}
 
           <div className="timer-container">
-            {timer.state === "playing" && (
+            {currentMode.type !== "words" && timer.state === "playing" && (
               <span className="timer">{timer.time}</span>
             )}
           </div>
@@ -276,6 +297,15 @@ function App() {
           time={timer.timeBound}
         />
       )}
+
+      {currentMode.type === "words" &&
+        currentWordIndex === currentMode.bound && (
+          <Result
+            charCount={charCount}
+            handleRestart={handleRestart}
+            time={timer.timeBound}
+          />
+        )}
 
       <Footer />
     </div>
