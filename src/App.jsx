@@ -7,13 +7,14 @@ import Result from "./components/Result";
 import Footer from "./components/Footer";
 import { dummyData } from "./data";
 import ModeSelector from "./components/ModeSelector";
+import Test from "./components/Test";
 
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
 
 function App() {
   const [currentMode, setCurrentMode] = useState({
     type: "words",
-    bound: 15,
+    bound: 25,
   });
 
   const [input, setInput] = useState("");
@@ -46,7 +47,7 @@ function App() {
     setTimeout(() => {
       setIsLoading(false);
 
-      return setWords(parseData(getWords(15)));
+      return setWords(parseData(getWords(currentMode.bound)));
     }, 1000);
 
     // fetchWords().then((data) => {
@@ -84,7 +85,8 @@ function App() {
 
   //Move showing words when reached 2nd line
   useEffect(() => {
-    if (!words.size || timer.time === 0 || isLoading) return;
+    // if (!words.size || timer.time === 0 || isLoading) return;
+    if (!words.size || isLoading) return;
     if (
       currWordRef?.current.offsetTop >= 35 &&
       currWordRef?.current.offsetLeft === 0
@@ -133,7 +135,7 @@ function App() {
 
   const setInputFocus = () =>
     timer.state !== "finished" &&
-    currentWordIndex === currentMode.bound &&
+    currentWordIndex < currentMode.bound &&
     inputRef.current.focus();
 
   const handleInput = (e) => {
@@ -168,10 +170,6 @@ function App() {
     }
   };
 
-  const isInputMatching = () => {
-    return words.get(currentWordIndex).slice(0, input.length) === input;
-  };
-
   const handleRestart = () => {
     setCurrentWordIndex(0);
     setTimer({ ...timer, time: 0, state: "paused" });
@@ -189,7 +187,7 @@ function App() {
     setTimeout(() => {
       setIsLoading(false);
 
-      return setWords(parseData(getWords(15)));
+      return setWords(parseData(getWords(currentMode.bound)));
     }, 1000);
   };
 
@@ -198,114 +196,85 @@ function App() {
     setInputFocus();
   };
 
+  console.log(currentWordIndex);
+  console.log(currentMode.bound);
+
   return (
     <div className="container">
       <Navbar />
-
-      {timer.state !== "finished" && (
-        <div className="test">
-          {timer.state === "paused" && (
-            <ModeSelector
-              handleModeSelection={handleModeSelection}
-              timer={timer}
-            />
-          )}
-
-          <div className="timer-container">
-            {currentMode.type !== "words" && timer.state === "playing" && (
-              <span className="timer">{timer.time}</span>
+      {timer.state !== "finished" &&
+        currentMode.type === "words" &&
+        currentWordIndex < currentMode.bound && (
+          <div className="test">
+            {timer.state === "paused" && (
+              <ModeSelector
+                handleModeSelection={handleModeSelection}
+                timer={timer}
+              />
             )}
-          </div>
 
-          <div className="text-container">
-            {isLoading ? (
-              <h2>loading...</h2>
-            ) : (
-              <div className="words">
-                {words.size !== 0 &&
-                  [...words.entries()].map((entry, idx) => {
-                    const [id, word] = entry;
+            <div className="timer-container">
+              {currentMode.type !== "words" && timer.state === "playing" && (
+                <span className="timer">{timer.time}</span>
+              )}
+            </div>
 
-                    if (currentWordIndex === id) {
-                      return (
-                        <div
-                          ref={currWordRef}
-                          className={`word active ${
-                            input.length
-                              ? isInputMatching()
-                                ? "correct"
-                                : "incorrect"
-                              : ""
-                          }`}
-                          key={idx}
-                          id={id}
-                        >
-                          {word}
-                        </div>
-                      );
-                    }
+            <div className="timer-container">
+              {currentMode.type === "words" && (
+                <span className="timer">
+                  {currentWordIndex}/{currentMode.bound}
+                </span>
+              )}
+            </div>
 
-                    if (currentWordIndex > id) {
-                      return (
-                        <div
-                          className={`word ${
-                            incorrectWords.has(id) ? "incorrect" : "correct"
-                          }`}
-                          key={idx}
-                          id={id}
-                        >
-                          {word}
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <div className={`word`} key={idx} id={id}>
-                        {word}
-                      </div>
-                    );
-                  })}
-              </div>
-            )}
-          </div>
-
-          <div className="form">
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onKeyUp={handleOnKeyUp}
-              onChange={handleInput}
-              disabled={isLoading || timer.state === "finished"}
+            <Test
+              words={words}
+              currentWordIndex={currentWordIndex}
+              incorrectWords={incorrectWords}
+              isLoading={isLoading}
+              currWordRef={currWordRef}
+              input={input}
             />
-            <button
-              type="button"
-              onClick={handleRestart}
-              className="btn restart-btn"
-              disabled={isLoading}
-            >
-              <RxReload />
-            </button>
+
+            <div className="form">
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onKeyUp={handleOnKeyUp}
+                onChange={handleInput}
+                disabled={isLoading || timer.state === "finished"}
+              />
+              <button
+                type="button"
+                onClick={handleRestart}
+                className="btn restart-btn"
+                disabled={isLoading}
+              >
+                <RxReload />
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {!Boolean(timer.time) && timer.state === "finished" && (
-        <Result
-          charCount={charCount}
-          handleRestart={handleRestart}
-          time={timer.timeBound}
-        />
-      )}
+      {(!Boolean(timer.time) && timer.state === "finished") ||
+        (currentMode.type === "words" &&
+          currentWordIndex === currentMode.bound && (
+            <Result
+              charCount={charCount}
+              handleRestart={handleRestart}
+              time={timer.timeBound}
+            />
+          ))}
 
-      {currentMode.type === "words" &&
+      {/* {currentMode.type === "words" &&
         currentWordIndex === currentMode.bound && (
           <Result
             charCount={charCount}
             handleRestart={handleRestart}
             time={timer.timeBound}
           />
-        )}
+      )} */}
 
       <Footer />
     </div>
