@@ -252,6 +252,10 @@ input.invisible {
   color: rgb(218, 148, 77);
 }
 
+.mode-selector-container button.selected {
+  color: rgb(218, 148, 77);
+}
+
 .loading {
   display: block;
   justify-self: stretch;

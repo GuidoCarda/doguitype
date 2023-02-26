@@ -1,23 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 
-const timeBounds = ["15", "30", "60", "120"];
-const wordsBounds = ["10", "25", "50", "100"];
+const modes = [
+  {
+    type: "time",
+    bounds: [15, 30, 60, 120],
+  },
+  // {
+  //   type: "words",
+  //   bounds: [10, 25, 50, 100],
+  // },
+];
 
 const ModeSelector = ({ handleModeSelection, timer }) => {
+  const [selectedMode, setSelectedMode] = useState(0);
+
   return (
     <div className="mode-selector-container">
-      <button className="">time</button>
-      <button className="">words</button>
-      <div>
-        {timeBounds.map((timeBound) => (
+      {modes.map((mode, idx) => {
+        return (
           <button
-            onClick={() => handleModeSelection(timeBound)}
-            key={timeBound}
-            className={`${
-              timer.timeBound === Number(timeBound) ? "selected" : ""
-            }`}
+            key={mode.type}
+            className={`${selectedMode === idx ? "selected" : ""} `}
           >
-            {timeBound}
+            {mode.type}
+          </button>
+        );
+      })}
+
+      <div>
+        {modes[selectedMode].bounds.map((bound) => (
+          <button
+            onClick={() => handleModeSelection(bound)}
+            key={bound}
+            className={`${timer.timeBound === bound ? "selected" : ""}`}
+          >
+            {bound}
           </button>
         ))}
       </div>

@@ -96,10 +96,10 @@ function App() {
       );
     }, 1000);
 
-    fetchWords().then((data) => {
-      setWords(parseData(data));
-      setIsLoading(false);
-    });
+    // fetchWords().then((data) => {
+    //   setWords(parseData(data));
+    //   setIsLoading(false);
+    // });
 
     return () => {
       fetchRun.current = true;
@@ -151,14 +151,28 @@ function App() {
     setInputFocus();
     setInput("");
     setIsLoading(true);
-    fetchWords().then((data) => {
-      setWords(parseData(data));
+
+    // fetchWords().then((data) => {
+    //   setWords(parseData(data));
+    //   setIsLoading(false);
+    // });
+
+    setTimeout(() => {
       setIsLoading(false);
-    });
+
+      return setWords(
+        parseData(
+          dummyData[
+            Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
+          ].split(" ")
+        )
+      );
+    }, 1000);
   };
 
   const handleModeSelection = (mode) => {
-    setTimer({ ...timer, timeBound: Number(mode), time: Number(mode) });
+    setTimer({ ...timer, timeBound: mode, time: mode });
+    setInputFocus();
   };
 
   return (
@@ -253,7 +267,11 @@ function App() {
       )}
 
       {!Boolean(timer.time) && timer.state === "finished" && (
-        <Result charCount={charCount} handleRestart={handleRestart} />
+        <Result
+          charCount={charCount}
+          handleRestart={handleRestart}
+          time={timer.timeBound}
+        />
       )}
 
       <Footer />
@@ -263,7 +281,7 @@ function App() {
 
 export default App;
 
-export const calculateWPM = (charCount) => charCount / 5 / 1;
+export const calculateWPM = (charCount, time) => charCount / 5 / (time / 60);
 
 const checkCharEquality = (char1, char2) => char1 === char2;
 const checkStringEquality = (str1, str2) => str1 === str2;
