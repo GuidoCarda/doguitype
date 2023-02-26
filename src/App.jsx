@@ -96,10 +96,10 @@ function App() {
       );
     }, 1000);
 
-    // fetchWords().then((data) => {
-    //   setWords(parseData(data));
-    //   setIsLoading(false);
-    // });
+    fetchWords().then((data) => {
+      setWords(parseData(data));
+      setIsLoading(false);
+    });
 
     return () => {
       fetchRun.current = true;
@@ -179,9 +179,10 @@ function App() {
               <span className="timer">{timer.time}</span>
             )}
           </div>
+
           <div className="text-container">
             {isLoading ? (
-              <h1>loading...</h1>
+              <h2>loading...</h2>
             ) : (
               <div className="words">
                 {words.size !== 0 &&
