@@ -8,6 +8,8 @@ import Footer from "./components/Footer";
 import { dummyData } from "./data";
 import ModeSelector from "./components/ModeSelector";
 import Test from "./components/Test";
+import Timer from "./components/Timer";
+import Stopwatch from "./components/Stopwatch";
 
 const timeBounds = { cuarter: 15, half: 30, minute: 60 };
 
@@ -196,9 +198,6 @@ function App() {
     setInputFocus();
   };
 
-  console.log(currentWordIndex);
-  console.log(currentMode.bound);
-
   return (
     <div className="container">
       <Navbar />
@@ -212,6 +211,9 @@ function App() {
                 timer={timer}
               />
             )}
+
+            <Timer />
+            <Stopwatch />
 
             <div className="timer-container">
               {currentMode.type !== "words" && timer.state === "playing" && (
