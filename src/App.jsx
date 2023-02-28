@@ -24,11 +24,6 @@ function App() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
-  const [timer, setTimer] = useState({
-    timeBound: 60,
-    time: 0,
-    state: "paused",
-  });
   const [isLoading, setIsLoading] = useState(true);
 
   const inputRef = useRef(null);
@@ -58,28 +53,9 @@ function App() {
     // });
 
     return () => {
-      // clearTimeout(id);
       fetchRun.current = true;
     };
   }, []);
-
-  // Countdown timer
-  useEffect(() => {
-    console.log(timer.state);
-    if (timer.state !== "playing") return;
-
-    if (timer.time === 0 && timer.state === "playing") {
-      setTimer({ ...timer, state: "finished" });
-      setInput("");
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-      setTimer((timer) => ({ ...timer, time: timer.time - 1 }));
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [timer]);
 
   useEffect(() => {
     setInputFocus();
@@ -93,7 +69,6 @@ function App() {
       currWordRef?.current.offsetTop >= 35 &&
       currWordRef?.current.offsetLeft === 0
     ) {
-      console.log(currWordRef?.current.offsetTop);
       const currWordIdx = currWordRef?.current.id;
 
       const wordsCopy = new Map(words);
@@ -108,16 +83,6 @@ function App() {
   }, [currWordRef.current]);
 
   const getWords = (wordsQty) => {
-    // if (currentMode === 0) {
-    //   return setWords(
-    //     parseData(
-    //       dummyData[
-    //         Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
-    //       ].split(" ")
-    //     )
-    //   );
-    // }
-
     setWords(
       parseData(
         dummyData[
@@ -136,9 +101,7 @@ function App() {
   };
 
   const setInputFocus = () =>
-    timer.state !== "finished" &&
-    currentWordIndex < currentMode.bound &&
-    inputRef.current.focus();
+    currentWordIndex < currentMode.bound && inputRef.current.focus();
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
@@ -153,14 +116,6 @@ function App() {
 
     if (pressedKeyCode === 9) return;
 
-    if (
-      currentWordIndex === 0 &&
-      timer.state === "paused" &&
-      currentMode.type === "time"
-    ) {
-      setTimer({ ...timer, time: Number(timer.timeBound), state: "playing" });
-    }
-
     if (pressedKeyCode === 32) {
       if (!checkStringEquality(input, words.get(currentWordIndex))) {
         SetIncorrectWords(incorrectWords.add(currentWordIndex));
@@ -174,17 +129,11 @@ function App() {
 
   const handleRestart = () => {
     setCurrentWordIndex(0);
-    setTimer({ ...timer, time: 0, state: "paused" });
     setCharCount(0);
     SetIncorrectWords(new Set());
     setInputFocus();
     setInput("");
     setIsLoading(true);
-
-    // fetchWords().then((data) => {
-    //   setWords(parseData(data));
-    //   setIsLoading(false);
-    // });
 
     setTimeout(() => {
       setIsLoading(false);
@@ -194,80 +143,69 @@ function App() {
   };
 
   const handleModeSelection = (mode) => {
-    setTimer({ ...timer, timeBound: mode, time: mode });
     setInputFocus();
   };
 
   return (
     <div className="container">
       <Navbar />
-      {timer.state !== "finished" &&
-        currentMode.type === "words" &&
-        currentWordIndex < currentMode.bound && (
-          <div className="test">
-            {timer.state === "paused" && (
-              <ModeSelector
-                handleModeSelection={handleModeSelection}
-                timer={timer}
-              />
-            )}
+      {currentMode.type === "words" && currentWordIndex < currentMode.bound && (
+        <div className="test">
+          <ModeSelector handleModeSelection={handleModeSelection} />
 
-            <Timer />
-            <Stopwatch />
+          <Timer />
+          <Stopwatch />
 
-            <div className="timer-container">
-              {currentMode.type !== "words" && timer.state === "playing" && (
-                <span className="timer">{timer.time}</span>
-              )}
-            </div>
-
-            <div className="timer-container">
-              {currentMode.type === "words" && (
-                <span className="timer">
-                  {currentWordIndex}/{currentMode.bound}
-                </span>
-              )}
-            </div>
-
-            <Test
-              words={words}
-              currentWordIndex={currentWordIndex}
-              incorrectWords={incorrectWords}
-              isLoading={isLoading}
-              currWordRef={currWordRef}
-              input={input}
-            />
-
-            <div className="form">
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onKeyUp={handleOnKeyUp}
-                onChange={handleInput}
-                disabled={isLoading || timer.state === "finished"}
-              />
-              <button
-                type="button"
-                onClick={handleRestart}
-                className="btn restart-btn"
-                disabled={isLoading}
-              >
-                <RxReload />
-              </button>
-            </div>
+          <div className="timer-container">
+            {currentMode.type !== "words" && <span className="timer">{}</span>}
           </div>
-        )}
 
-      {(!Boolean(timer.time) && timer.state === "finished") ||
+          <div className="timer-container">
+            {currentMode.type === "words" && (
+              <span className="timer">
+                {currentWordIndex}/{currentMode.bound}
+              </span>
+            )}
+          </div>
+
+          <Test
+            words={words}
+            currentWordIndex={currentWordIndex}
+            incorrectWords={incorrectWords}
+            isLoading={isLoading}
+            currWordRef={currWordRef}
+            input={input}
+          />
+          <div className="form">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onKeyUp={handleOnKeyUp}
+              onChange={handleInput}
+              disabled={isLoading}
+            />
+            <button
+              type="button"
+              onClick={handleRestart}
+              className="btn restart-btn"
+              disabled={isLoading}
+            >
+              <RxReload />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* {(!Boolean(timer.time) && timer.state === "finished") ||
         (currentMode.type === "words" &&
           currentWordIndex === currentMode.bound && (
             <Result
               charCount={charCount}
               handleRestart={handleRestart}
-              time={timer.timeBound}
+              time={60}
             />
-          ))}
+          ))} */}
 
       {/* {currentMode.type === "words" &&
         currentWordIndex === currentMode.bound && (

@@ -33,7 +33,7 @@ const ModeSelector = ({ handleModeSelection, timer }) => {
           <button
             onClick={() => handleModeSelection(bound)}
             key={bound}
-            className={`${timer.timeBound === bound ? "selected" : ""}`}
+            className={``}
           >
             {bound}
           </button>
