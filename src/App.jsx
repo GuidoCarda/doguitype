@@ -1,22 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
-import { RxReload } from "react-icons/rx";
+//components
 import Navbar from "./components/Navbar";
 import Result from "./components/Result";
 import Footer from "./components/Footer";
-import { dummyData } from "./data";
 import ModeSelector from "./components/ModeSelector";
 import Test from "./components/Test";
 import Timer from "./components/Timer";
 import Stopwatch from "./components/Stopwatch";
 
-const timeBounds = { cuarter: 15, half: 30, minute: 60 };
+//temp data
+import { dummyData } from "./data";
+
+//icons
+import { RxReload } from "react-icons/rx";
+import useTimer from "./hooks/useTimer";
 
 function App() {
   const [currentMode, setCurrentMode] = useState({
-    type: "words",
-    bound: 25,
+    type: "time",
+    bound: 30,
   });
 
   const [input, setInput] = useState("");
@@ -25,6 +29,8 @@ function App() {
   const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
+  const timer = useTimer();
 
   const inputRef = useRef(null);
   const currWordRef = useRef(null);
@@ -40,31 +46,29 @@ function App() {
 
   useEffect(() => {
     if (fetchRun.current) return;
-
     setTimeout(() => {
       setIsLoading(false);
 
-      return setWords(parseData(getWords(currentMode.bound)));
+      setWords(
+        parseData(
+          getWords(currentMode.type === "time" ? 200 : currentMode.bound)
+        )
+      );
     }, 1000);
-
-    // fetchWords().then((data) => {
-    //   setWords(parseData(data));
-    //   setIsLoading(false);
-    // });
 
     return () => {
       fetchRun.current = true;
     };
   }, []);
 
-  useEffect(() => {
-    setInputFocus();
-  }, [isLoading]);
+  // useEffect(() => {
+  //   setInputFocus();
+  // }, [isLoading]);
 
   //Move showing words when reached 2nd line
   useEffect(() => {
     // if (!words.size || timer.time === 0 || isLoading) return;
-    if (!words.size || isLoading) return;
+    if (!words.size || isLoading || currentWordIndex === words.size) return;
     if (
       currWordRef?.current.offsetTop >= 35 &&
       currWordRef?.current.offsetLeft === 0
@@ -96,12 +100,13 @@ function App() {
 
   const parseData = (data) => {
     const map = new Map();
+    console.log(data);
     data.forEach((word, idx) => map.set(idx, word));
     return map;
   };
 
-  const setInputFocus = () =>
-    currentWordIndex < currentMode.bound && inputRef.current.focus();
+  // const setInputFocus = () =>
+  //   currentWordIndex < currentMode.bound && inputRef.current.focus();
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
@@ -111,10 +116,11 @@ function App() {
   const handleOnKeyUp = (e) => {
     const pressedKeyCode = e.keyCode;
 
-    if (currentMode.type === "words") {
-    }
-
     if (pressedKeyCode === 9) return;
+
+    if (currentMode.type === "time" && timer.time === 0) {
+      timer.set(currentMode.bound);
+    }
 
     if (pressedKeyCode === 32) {
       if (!checkStringEquality(input, words.get(currentWordIndex))) {
@@ -131,8 +137,8 @@ function App() {
     setCurrentWordIndex(0);
     setCharCount(0);
     SetIncorrectWords(new Set());
-    setInputFocus();
     setInput("");
+    timer.reset();
     setIsLoading(true);
 
     setTimeout(() => {
@@ -143,21 +149,26 @@ function App() {
   };
 
   const handleModeSelection = (mode) => {
-    setInputFocus();
+    setCurrentMode(mode);
   };
 
   return (
     <div className="container">
       <Navbar />
-      {currentMode.type === "words" && currentWordIndex < currentMode.bound && (
-        <div className="test">
-          <ModeSelector handleModeSelection={handleModeSelection} />
 
-          <Timer />
-          <Stopwatch />
+      {timer.state !== "finished" && (
+        <div className="test">
+          {timer.state === "idle" && (
+            <ModeSelector
+              handleModeSelection={handleModeSelection}
+              currentMode={currentMode}
+            />
+          )}
 
           <div className="timer-container">
-            {currentMode.type !== "words" && <span className="timer">{}</span>}
+            {currentMode.type === "time" && timer.state === "playing" && (
+              <span className="timer">{timer.time}</span>
+            )}
           </div>
 
           <div className="timer-container">
@@ -197,25 +208,13 @@ function App() {
         </div>
       )}
 
-      {/* {(!Boolean(timer.time) && timer.state === "finished") ||
-        (currentMode.type === "words" &&
-          currentWordIndex === currentMode.bound && (
-            <Result
-              charCount={charCount}
-              handleRestart={handleRestart}
-              time={60}
-            />
-          ))} */}
-
-      {/* {currentMode.type === "words" &&
-        currentWordIndex === currentMode.bound && (
-          <Result
-            charCount={charCount}
-            handleRestart={handleRestart}
-            time={timer.timeBound}
-          />
-      )} */}
-
+      {!Boolean(timer.time) && timer.state === "finished" && (
+        <Result
+          charCount={charCount}
+          handleRestart={handleRestart}
+          time={currentMode.bound}
+        />
+      )}
       <Footer />
     </div>
   );

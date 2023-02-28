@@ -2,9 +2,15 @@ import { useEffect, useState } from "react";
 
 const useTimer = () => {
   const [time, setTime] = useState(0);
+  const [state, setState] = useState("idle");
 
   useEffect(() => {
-    if (time === 0) return;
+    if (state === "idle") return;
+
+    if (time === 0) {
+      setState("finished");
+      return;
+    }
 
     const intervalId = setInterval(() => {
       setTime((time) => time - 1);
@@ -13,9 +19,17 @@ const useTimer = () => {
     return () => clearInterval(intervalId);
   }, [time]);
 
-  const setTimer = (timeBound) => setTime(timeBound);
+  const set = (timeBound) => {
+    setTime(timeBound);
+    setState("playing");
+  };
 
-  return { time, setTimer };
+  const reset = () => {
+    setTime(0);
+    setState("idle");
+  };
+
+  return { time, state, set, reset };
 };
 
 export default useTimer;

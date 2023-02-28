@@ -11,29 +11,23 @@ const modes = [
   },
 ];
 
-const ModeSelector = ({ handleModeSelection, timer }) => {
-  const [selectedMode, setSelectedMode] = useState(0);
-
+const ModeSelector = ({ handleModeSelection, currentMode }) => {
   return (
     <div className="mode-selector-container">
       {modes.map((mode, idx) => {
         return (
-          <button
-            key={mode.type}
-            onClick={() => setSelectedMode(idx)}
-            className={`${selectedMode === idx ? "selected" : ""} `}
-          >
+          <button key={mode.type} className={``}>
             {mode.type}
           </button>
         );
       })}
 
       <div>
-        {modes[selectedMode].bounds.map((bound) => (
+        {modes[0].bounds.map((bound) => (
           <button
-            onClick={() => handleModeSelection(bound)}
+            onClick={() => handleModeSelection({ type: "time", bound })}
             key={bound}
-            className={``}
+            className={`${currentMode.bound === bound && "selected"}`}
           >
             {bound}
           </button>
