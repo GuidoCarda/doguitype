@@ -7,8 +7,6 @@ import Result from "./components/Result";
 import Footer from "./components/Footer";
 import ModeSelector from "./components/ModeSelector";
 import Test from "./components/Test";
-import Timer from "./components/Timer";
-import Stopwatch from "./components/Stopwatch";
 
 //temp data
 import { dummyData } from "./data";
@@ -68,7 +66,8 @@ function App() {
   //Move showing words when reached 2nd line
   useEffect(() => {
     // if (!words.size || timer.time === 0 || isLoading) return;
-    if (!words.size || isLoading || currentWordIndex === words.size) return;
+    if (!words.size || isLoading || words.size < 15) return;
+
     if (
       currWordRef?.current.offsetTop >= 35 &&
       currWordRef?.current.offsetLeft === 0
@@ -100,13 +99,9 @@ function App() {
 
   const parseData = (data) => {
     const map = new Map();
-    console.log(data);
     data.forEach((word, idx) => map.set(idx, word));
     return map;
   };
-
-  // const setInputFocus = () =>
-  //   currentWordIndex < currentMode.bound && inputRef.current.focus();
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
