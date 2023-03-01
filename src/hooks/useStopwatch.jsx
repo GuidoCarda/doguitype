@@ -16,12 +16,12 @@ const useStopwatch = () => {
 
   const start = () => setIsOn(true);
   const stop = () => setIsOn(false);
-  const restart = () => {
+  const reset = () => {
     stop();
     setTime(0);
   };
 
-  return { time, isOn, start, stop, restart };
+  return { time, isOn, start, stop, reset };
 };
 
 export default useStopwatch;

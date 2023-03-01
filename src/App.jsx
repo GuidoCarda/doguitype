@@ -153,6 +153,7 @@ function App() {
     SetIncorrectWords(new Set());
     setInput("");
     timer.reset();
+    stopwatch.reset();
     setIsLoading(true);
 
     setTimeout(() => {
