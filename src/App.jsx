@@ -15,9 +15,14 @@ import { dummyData } from "./data";
 import { RxReload } from "react-icons/rx";
 import useTimer from "./hooks/useTimer";
 
+const MODES = [
+  { type: "words", bounds: [10, 25, 50, 100] },
+  { type: "timed", bounds: [15, 30, 60, 120] },
+];
+
 function App() {
   const [currentMode, setCurrentMode] = useState({
-    type: "time",
+    type: "words",
     bound: 30,
   });
 
@@ -147,11 +152,15 @@ function App() {
     setCurrentMode(mode);
   };
 
+  const isFinished =
+    (currentMode.type === "time" && timer.state === "finished") ||
+    (currentMode.type === "words" && currentWordIndex === currentMode.bound);
+
   return (
     <div className="container">
       <Navbar />
 
-      {timer.state !== "finished" && (
+      {!isFinished && (
         <div className="test">
           {timer.state === "idle" && (
             <ModeSelector
@@ -203,7 +212,7 @@ function App() {
         </div>
       )}
 
-      {!Boolean(timer.time) && timer.state === "finished" && (
+      {isFinished && (
         <Result
           charCount={charCount}
           handleRestart={handleRestart}
