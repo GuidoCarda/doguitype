@@ -1,31 +1,36 @@
 import React, { useState } from "react";
 
-const modes = [
-  {
-    type: "time",
-    bounds: [15, 30, 60, 120],
-  },
-  {
-    type: "words",
-    bounds: [10, 25, 50, 100],
-  },
+const MODES = [
+  { type: "time", bounds: [15, 30, 60, 120] },
+  { type: "words", bounds: [10, 25, 50, 100] },
 ];
 
 const ModeSelector = ({ handleModeSelection, currentMode }) => {
   return (
     <div className="mode-selector-container">
-      {modes.map((mode, idx) => {
+      {MODES.map(({ type, bounds }) => {
         return (
-          <button key={mode.type} className={``}>
-            {mode.type}
+          <button
+            onClick={() =>
+              handleModeSelection({
+                type,
+                bound: bounds[0],
+              })
+            }
+            key={type}
+            className={`${currentMode.type === type && "selected"} `}
+          >
+            {type}
           </button>
         );
       })}
 
       <div>
-        {modes[0].bounds.map((bound) => (
+        {MODES[
+          MODES.findIndex((mode) => mode.type === currentMode.type)
+        ].bounds.map((bound) => (
           <button
-            onClick={() => handleModeSelection({ type: "time", bound })}
+            onClick={() => handleModeSelection({ ...currentMode, bound })}
             key={bound}
             className={`${currentMode.bound === bound && "selected"}`}
           >

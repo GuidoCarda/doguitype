@@ -15,17 +15,11 @@ import { dummyData } from "./data";
 import { RxReload } from "react-icons/rx";
 import useTimer from "./hooks/useTimer";
 import useStopwatch from "./hooks/useStopwatch";
-import Stopwatch from "./components/Stopwatch";
-
-const MODES = [
-  { type: "words", bounds: [10, 25, 50, 100] },
-  { type: "timed", bounds: [15, 30, 60, 120] },
-];
 
 function App() {
   const [currentMode, setCurrentMode] = useState({
-    type: "words",
-    bound: 10,
+    type: "time",
+    bound: 30,
   });
 
   const [input, setInput] = useState("");
@@ -66,6 +60,17 @@ function App() {
       fetchRun.current = true;
     };
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setWords(
+        parseData(
+          getWords(currentMode.type === "time" ? 200 : currentMode.bound)
+        )
+      );
+    }, 1000);
+    setIsLoading(false);
+  }, [currentMode]);
 
   // useEffect(() => {
   //   setInputFocus();
@@ -176,13 +181,13 @@ function App() {
       <Navbar />
       {!isFinished && (
         <div className="test">
-          {(currentMode.type === "time" && timer.state === "idle") ||
-            (currentMode.type === "words" && !stopwatch.isOn && (
-              <ModeSelector
-                handleModeSelection={handleModeSelection}
-                currentMode={currentMode}
-              />
-            ))}
+          {((currentMode.type === "time" && timer.state === "idle") ||
+            (currentMode.type === "words" && !stopwatch.isOn)) && (
+            <ModeSelector
+              handleModeSelection={handleModeSelection}
+              currentMode={currentMode}
+            />
+          )}
 
           <div className="timer-container">
             {currentMode.type === "time" && timer.state === "playing" && (
@@ -191,7 +196,7 @@ function App() {
           </div>
 
           <div className="timer-container">
-            {currentMode.type === "words" && (
+            {currentMode.type === "words" && stopwatch.isOn && (
               <span className="timer">
                 {currentWordIndex}/{currentMode.bound}
               </span>
