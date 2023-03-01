@@ -3,6 +3,8 @@ import { RxReload } from "react-icons/rx";
 import { calculateWPM } from "../App";
 
 const Result = ({ charCount, handleRestart, time }) => {
+  console.log(time);
+
   return (
     <div className="finished-test">
       <h2>Se finalizo el tiempo</h2>

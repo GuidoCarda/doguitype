@@ -1,5 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 
+:root {
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -269,4 +272,16 @@ input.invisible {
   display: block;
   justify-self: stretch;
   border: 1px solid red;
+}
+
+.stopwatch-precario {
+  font-size: 3rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.stopwatch-precario button {
+  padding: 0.3rem 1rem;
+  font-family: inherit;
 }

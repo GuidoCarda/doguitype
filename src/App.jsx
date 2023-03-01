@@ -14,6 +14,8 @@ import { dummyData } from "./data";
 //icons
 import { RxReload } from "react-icons/rx";
 import useTimer from "./hooks/useTimer";
+import useStopwatch from "./hooks/useStopwatch";
+import Stopwatch from "./components/Stopwatch";
 
 const MODES = [
   { type: "words", bounds: [10, 25, 50, 100] },
@@ -23,7 +25,7 @@ const MODES = [
 function App() {
   const [currentMode, setCurrentMode] = useState({
     type: "words",
-    bound: 30,
+    bound: 10,
   });
 
   const [input, setInput] = useState("");
@@ -34,6 +36,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   const timer = useTimer();
+  const stopwatch = useStopwatch();
 
   const inputRef = useRef(null);
   const currWordRef = useRef(null);
@@ -122,6 +125,10 @@ function App() {
       timer.set(currentMode.bound);
     }
 
+    if (currentMode.type === "words" && !Boolean(currentWordIndex)) {
+      stopwatch.start();
+    }
+
     if (pressedKeyCode === 32) {
       if (!checkStringEquality(input, words.get(currentWordIndex))) {
         SetIncorrectWords(incorrectWords.add(currentWordIndex));
@@ -130,6 +137,13 @@ function App() {
       setCharCount((prevCount) => prevCount + input.length);
       setCurrentWordIndex((prev) => prev + 1);
       setInput("");
+
+      if (
+        currentMode.type === "words" &&
+        currentWordIndex + 1 === currentMode.bound
+      ) {
+        stopwatch.stop();
+      }
     }
   };
 
@@ -159,7 +173,6 @@ function App() {
   return (
     <div className="container">
       <Navbar />
-
       {!isFinished && (
         <div className="test">
           {timer.state === "idle" && (
@@ -191,6 +204,7 @@ function App() {
             currWordRef={currWordRef}
             input={input}
           />
+
           <div className="form">
             <input
               ref={inputRef}
@@ -216,7 +230,9 @@ function App() {
         <Result
           charCount={charCount}
           handleRestart={handleRestart}
-          time={currentMode.bound}
+          time={
+            currentMode.type === "time" ? currentMode.bound : stopwatch.time
+          }
         />
       )}
       <Footer />
