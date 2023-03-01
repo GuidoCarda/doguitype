@@ -175,12 +175,13 @@ function App() {
       <Navbar />
       {!isFinished && (
         <div className="test">
-          {timer.state === "idle" && (
-            <ModeSelector
-              handleModeSelection={handleModeSelection}
-              currentMode={currentMode}
-            />
-          )}
+          {(currentMode.type === "time" && timer.state === "idle") ||
+            (currentMode.type === "words" && !stopwatch.isOn && (
+              <ModeSelector
+                handleModeSelection={handleModeSelection}
+                currentMode={currentMode}
+              />
+            ))}
 
           <div className="timer-container">
             {currentMode.type === "time" && timer.state === "playing" && (
