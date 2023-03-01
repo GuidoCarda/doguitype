@@ -237,6 +237,7 @@ function App() {
         <Result
           charCount={charCount}
           handleRestart={handleRestart}
+          currentMode={currentMode}
           time={
             currentMode.type === "time" ? currentMode.bound : stopwatch.time
           }

@@ -215,16 +215,16 @@ input.invisible {
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  margin-top: 2rem;
 }
 
 .result {
-  margin-top: 2rem;
+  text-align: center;
   background: hsl(130, 47%, 36%);
   border-radius: 0.3rem;
   width: max-content;
   margin-inline: auto;
   padding: 0.25rem 1rem;
+  margin-bottom: 2rem;
 }
 
 .mode-selector-container {
