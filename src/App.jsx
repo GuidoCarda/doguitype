@@ -45,39 +45,22 @@ function App() {
   };
 
   useEffect(() => {
-    if (fetchRun.current) return;
+    // console.log("entro");
+    // if (fetchRun.current) return;
+    setIsLoading(true);
     setTimeout(() => {
-      setWords(
-        parseData(
-          getWords(currentMode.type === "time" ? 200 : currentMode.bound)
-        )
-      );
+      setWords(getWords(currentMode.type === "time" ? 200 : currentMode.bound));
+      setIsLoading(false);
     }, 1000);
-    setIsLoading(false);
-    return () => {
-      fetchRun.current = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setWords(
-        parseData(
-          getWords(currentMode.type === "time" ? 200 : currentMode.bound)
-        )
-      );
-    }, 1000);
-    setIsLoading(false);
+    // return () => {
+    //   fetchRun.current = true;
+    // };
   }, [currentMode]);
-
-  // useEffect(() => {
-  //   setInputFocus();
-  // }, [isLoading]);
 
   //Move showing words when reached 2nd line
   useEffect(() => {
     // if (!words.size || timer.time === 0 || isLoading) return;
-    if (!words.size || isLoading || words.size < 15) return;
+    if (!words.size || isLoading || words.size < 15 || isFinished) return;
 
     if (
       currWordRef?.current.offsetTop >= 35 &&
@@ -97,14 +80,12 @@ function App() {
   }, [currWordRef.current]);
 
   const getWords = (wordsQty) => {
-    setWords(
-      parseData(
-        dummyData[
-          Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
-        ]
-          .split(" ")
-          .slice(0, wordsQty)
-      )
+    return parseData(
+      dummyData[
+        Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
+      ]
+        .split(" ")
+        .slice(0, wordsQty)
     );
   };
 
