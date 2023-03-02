@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { motion } from "framer-motion";
 
 const MODES = [
   { type: "time", bounds: [15, 30, 60, 120] },
@@ -7,7 +8,13 @@ const MODES = [
 
 const ModeSelector = ({ handleModeSelection, currentMode }) => {
   return (
-    <div className="mode-selector-container">
+    <motion.div
+      className="mode-selector-container"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.5 }}
+    >
       {MODES.map(({ type, bounds }) => {
         return (
           <button
@@ -25,7 +32,7 @@ const ModeSelector = ({ handleModeSelection, currentMode }) => {
         );
       })}
 
-      <div>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         {MODES[
           MODES.findIndex((mode) => mode.type === currentMode.type)
         ].bounds.map((bound) => (
@@ -37,8 +44,8 @@ const ModeSelector = ({ handleModeSelection, currentMode }) => {
             {bound}
           </button>
         ))}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

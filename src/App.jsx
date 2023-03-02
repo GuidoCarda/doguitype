@@ -15,6 +15,7 @@ import { dummyData } from "./data";
 import { RxReload } from "react-icons/rx";
 import useTimer from "./hooks/useTimer";
 import useStopwatch from "./hooks/useStopwatch";
+import { motion, AnimatePresence } from "framer-motion";
 
 function App() {
   const [currentMode, setCurrentMode] = useState({
@@ -160,19 +161,26 @@ function App() {
       <Navbar />
       {!isFinished && (
         <div className="test">
-          {((currentMode.type === "time" && timer.state === "idle") ||
-            (currentMode.type === "words" && !stopwatch.isOn)) && (
-            <ModeSelector
-              handleModeSelection={handleModeSelection}
-              currentMode={currentMode}
-            />
-          )}
+          <AnimatePresence>
+            {((currentMode.type === "time" && timer.state === "idle") ||
+              (currentMode.type === "words" && !stopwatch.isOn)) && (
+              <ModeSelector
+                key={"mode-selector"}
+                handleModeSelection={handleModeSelection}
+                currentMode={currentMode}
+              />
+            )}
+          </AnimatePresence>
 
-          <div className="timer-container">
+          <motion.div
+            initial={{ y: 100 }}
+            animate={{ y: 0 }}
+            className="timer-container"
+          >
             {currentMode.type === "time" && timer.state === "playing" && (
               <span className="timer">{timer.time}</span>
             )}
-          </div>
+          </motion.div>
 
           <div className="timer-container">
             {currentMode.type === "words" && stopwatch.isOn && (

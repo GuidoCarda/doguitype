@@ -1,5 +1,5 @@
 import React from "react";
-import { calculateWPM } from "../App";
+import { motion } from "framer-motion";
 
 const Test = ({
   words,
@@ -16,9 +16,20 @@ const Test = ({
   return (
     <div className="text-container">
       {isLoading ? (
-        <h2>loading...</h2>
+        <motion.h2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ repeat: Infinity, duration: 1 }}
+        >
+          loading...
+        </motion.h2>
       ) : (
-        <div className="words">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="words"
+        >
           {words.size !== 0 &&
             [...words.entries()].map((entry, idx) => {
               const [id, word] = entry;
@@ -62,7 +73,7 @@ const Test = ({
                 </div>
               );
             })}
-        </div>
+        </motion.div>
       )}
     </div>
   );

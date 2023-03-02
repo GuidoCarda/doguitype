@@ -256,6 +256,7 @@ input.invisible {
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  text-align: center;
 }
 
 .result {
@@ -292,7 +293,7 @@ input.invisible {
 }
 
 .mode-selector-container button:hover {
-  color: rgb(29, 31, 33);
+  color: var(--test-font-clr-active);
 }
 
 .mode-selector-container > div {

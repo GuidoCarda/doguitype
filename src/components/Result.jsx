@@ -1,10 +1,16 @@
 import React from "react";
 import { RxReload } from "react-icons/rx";
 import { calculateWPM } from "../App";
+import { motion } from "framer-motion";
 
 const Result = ({ charCount, handleRestart, time, currentMode }) => {
   return (
-    <div className="finished-test">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.75, type: "tween" }}
+      className="finished-test"
+    >
       {currentMode.type === "words" && (
         <h2>
           Finalizaste el test! Completaste las {currentMode.bound} palabras.
@@ -24,7 +30,7 @@ const Result = ({ charCount, handleRestart, time, currentMode }) => {
       <button type="button" className="btn reset-btn" onClick={handleRestart}>
         <RxReload />
       </button>
-    </div>
+    </motion.div>
   );
 };
 
