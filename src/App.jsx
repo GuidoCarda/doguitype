@@ -47,15 +47,13 @@ function App() {
   useEffect(() => {
     if (fetchRun.current) return;
     setTimeout(() => {
-      setIsLoading(false);
-
       setWords(
         parseData(
           getWords(currentMode.type === "time" ? 200 : currentMode.bound)
         )
       );
     }, 1000);
-
+    setIsLoading(false);
     return () => {
       fetchRun.current = true;
     };

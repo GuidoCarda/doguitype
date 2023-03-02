@@ -1,22 +1,50 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 
-:root {
-}
-
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
+.theme-1 {
+  --bg-color: #171717;
+
+  --font-color: #dddddd;
+
+  --font-test-color: #8e909c;
+  --font-test-color-active: #d3d7e2;
+  --font-test-correct: #4eb765;
+  --font-test-incorrect: #b82c22;
+
+  --color-accent: rgb(218, 148, 77);
+}
+
+.theme-2 {
+  --bg-color: #eaeef2;
+
+  --font-color: #27282c;
+
+  --font-test-color: #5e606a;
+  --font-test-color-active: #1d1e21;
+  --font-test-correct: #4eb765;
+  --font-test-incorrect: #b82c22;
+
+  --color-accent: rgb(88, 148, 208);
+}
+
+#root {
+  background-color: var(--bg-color);
+}
+
 .container {
   min-height: 100vh;
   width: min(90vw, 960px);
   margin-inline: auto;
-  /* border: 2px solid white; */
+
   display: grid;
   grid-template-rows: auto 1fr auto;
   padding: 1.5rem;
+  color: var(--font-color);
 }
 
 .nav-bar,
@@ -27,11 +55,9 @@
 }
 
 .nav-bar {
-  /* border: 2px solid green; */
 }
 
 .footer {
-  /* border: 2px solid red; */
   justify-content: center;
   color: rgb(160, 165, 183);
 }
@@ -42,12 +68,12 @@
   font-size: 1.5rem;
   gap: 0.5rem;
   font-weight: 500;
-  color: rgb(229, 229, 229);
+  color: rgb(95, 100, 106);
 }
 
 .nav-logo > svg {
   font-size: 2.5rem;
-  color: rgb(123, 123, 150);
+  color: rgb(79, 83, 97);
 }
 
 .test {
@@ -56,7 +82,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* border: 2px solid red; */
 }
 
 .finished-test {
@@ -75,7 +100,7 @@
 }
 
 .test .timer {
-  color: rgb(218, 148, 77);
+  color: var(--color-accent);
   font-size: 1.25rem;
   font-weight: 500;
 }
@@ -85,7 +110,7 @@
   overflow-y: hidden;
   margin-block: 2rem;
   font-size: 1.5rem;
-  color: rgb(123, 123, 150);
+  color: var(--font-test-color);
 }
 
 .words {
@@ -97,14 +122,6 @@
   line-height: 2.2rem;
 }
 
-.input-text.no-match {
-  color: rgb(161, 29, 29);
-}
-
-.input-text.match {
-  color: rgb(29, 161, 73);
-}
-
 .word {
   user-select: none;
   border-radius: 0.3rem;
@@ -112,40 +129,29 @@
 }
 
 .word.active {
-  color: rgb(229, 229, 229);
-  background: rgb(44, 44, 44);
+  background: rgb(209, 211, 214);
+  color: var(--font-test-color-active);
 }
 
 .word.active.incorrect {
-  color: rgb(184, 44, 34);
+  color: var(--font-test-incorrect);
 }
 
 .word.active.correct {
-  color: rgb(78, 183, 101);
+  color: var(--font-test-correct);
 }
 
 .word.incorrect {
-  color: rgb(184, 44, 34);
+  color: var(--font-test-incorrect);
 }
 
 .word.correct {
-  color: rgb(229, 229, 229);
-}
-
-.word > .correct {
-  color: rgb(213, 213, 213);
-}
-
-.word > .incorrect {
-  color: rgb(184, 44, 34);
-  text-decoration: underline;
+  color: var(--font-color);
 }
 
 .form {
   width: 100%;
   margin-inline: auto;
-
-  /* border: 1px solid blue; */
 
   display: flex;
   flex-direction: column;
@@ -162,6 +168,7 @@ input {
   font-size: 1rem;
   outline: none;
   border: none;
+  background: #ccd0d6;
 }
 
 input:disabled {
@@ -189,7 +196,7 @@ input.invisible {
   cursor: pointer;
   user-select: none;
 
-  background-color: rgb(218, 148, 77);
+  background-color: var(--color-accent);
   color: hsl(30, 66%, 20%);
 }
 
@@ -203,7 +210,10 @@ input.invisible {
 }
 
 .btn:hover {
-  background-color: hsl(30, 66%, 55%);
+  /* background-color: hsl(30, 66%, 55%); */
+  /* background-color: var(--); */
+
+  filter: opacity(50);
 }
 
 .btn:focus {
@@ -236,7 +246,8 @@ input.invisible {
   height: 2.25rem;
   width: 80%;
 
-  background: #47494b;
+  background: #ccced6;
+
   border-radius: 0.3rem;
 }
 
@@ -247,11 +258,11 @@ input.invisible {
   outline: none;
   border: none;
   background: none;
-  color: rgb(180, 180, 180);
+  color: var(--font-test-color);
 }
 
 .mode-selector-container button:hover {
-  color: rgb(214, 214, 214);
+  color: rgb(29, 31, 33);
 }
 
 .mode-selector-container > div {
@@ -261,11 +272,11 @@ input.invisible {
 }
 
 .mode-selector-container > div button.selected {
-  color: rgb(218, 148, 77);
+  color: var(--color-accent);
 }
 
 .mode-selector-container button.selected {
-  color: rgb(218, 148, 77);
+  color: var(--color-accent);
 }
 
 .loading {
