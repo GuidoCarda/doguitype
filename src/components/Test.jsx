@@ -1,5 +1,5 @@
-import React from "react";
-import { calculateWPM } from "../App";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const Test = ({
   words,
@@ -13,12 +13,26 @@ const Test = ({
     return words.get(currentWordIndex).slice(0, input.length) === input;
   };
 
+  console.log(currWordRef);
+
   return (
     <div className="text-container">
       {isLoading ? (
         <h2>loading...</h2>
       ) : (
         <div className="words">
+          <motion.div
+            layout
+            className="active-bg"
+            style={
+              currWordRef.current && {
+                width: currWordRef.current.clientWidth,
+                top: currWordRef.current.offsetTop,
+                left: currWordRef.current.offsetLeft,
+              }
+            }
+            transition={{ duration: 0.1 }}
+          ></motion.div>
           {words.size !== 0 &&
             [...words.entries()].map((entry, idx) => {
               const [id, word] = entry;

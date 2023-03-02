@@ -120,6 +120,7 @@
   flex-wrap: wrap;
   justify-items: flex-start;
   line-height: 2.2rem;
+  z-index: 10;
 }
 
 .word {
@@ -129,7 +130,7 @@
 }
 
 .word.active {
-  background: rgb(209, 211, 214);
+  /* background: rgb(209, 211, 214); */
   color: var(--font-test-color-active);
 }
 
@@ -295,4 +296,13 @@ input.invisible {
 .stopwatch-precario button {
   padding: 0.3rem 1rem;
   font-family: inherit;
+}
+
+.active-bg {
+  position: absolute;
+  z-index: -1;
+
+  height: 2rem;
+  background: rgb(210, 212, 219);
+  border-radius: 0.3rem;
 }
