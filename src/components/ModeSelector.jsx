@@ -1,19 +1,26 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 const MODES = [
   { type: "time", bounds: [15, 30, 60, 120] },
   { type: "words", bounds: [10, 25, 50, 100] },
 ];
 
+const modeSelector = {
+  visible: { opacity: 1 },
+  hidden: { opacity: 0 },
+  fadeInStart: { opacity: 0, y: -10 },
+  fadeInEnd: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
+
 const ModeSelector = ({ handleModeSelection, currentMode }) => {
   return (
     <motion.div
       className="mode-selector-container"
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.5 }}
+      initial="fadeInStart"
+      animate="fadeInEnd"
+      exit="fadeInStart"
+      variants={modeSelector}
     >
       {MODES.map(({ type, bounds }) => {
         return (
@@ -31,20 +38,24 @@ const ModeSelector = ({ handleModeSelection, currentMode }) => {
           </button>
         );
       })}
-
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        {MODES[
-          MODES.findIndex((mode) => mode.type === currentMode.type)
-        ].bounds.map((bound) => (
-          <button
-            onClick={() => handleModeSelection({ ...currentMode, bound })}
-            key={bound}
-            className={`${currentMode.bound === bound && "selected"}`}
-          >
-            {bound}
-          </button>
-        ))}
-      </motion.div>
+      <div key={currentMode.type}>
+        <AnimatePresence>
+          {MODES[
+            MODES.findIndex((mode) => mode.type === currentMode.type)
+          ].bounds.map((bound) => (
+            <motion.button
+              initial="hidden"
+              animate="visible"
+              variants={modeSelector}
+              onClick={() => handleModeSelection({ ...currentMode, bound })}
+              key={bound}
+              className={`${currentMode.bound === bound && "selected"}`}
+            >
+              {bound}
+            </motion.button>
+          ))}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 };

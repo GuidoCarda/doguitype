@@ -310,6 +310,28 @@ input.invisible {
   color: var(--clr-accent);
 }
 
+@media screen and (max-width: 600px) {
+  .mode-selector-container {
+    height: fit-content;
+    padding-block: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .mode-selector-container > div {
+    margin-left: 0;
+    margin-top: 0.35rem;
+
+    padding-top: 0.35rem;
+
+    flex-basis: 80%;
+    justify-content: center;
+    align-items: center;
+
+    border-top: 1px solid var(--bg-clr);
+  }
+}
+
 .loading {
   display: block;
   justify-self: stretch;
