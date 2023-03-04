@@ -1,4 +1,4 @@
-export const API_URL = "https://random-word-api.herokuapp.com/word?number=100";
+export const API_URL = "https://random-word-api.herokuapp.com/word";
 
 export const MODES = [
   { type: "time", bounds: [15, 30, 60, 120] },

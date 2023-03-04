@@ -1,17 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
+import useWords from "../hooks/useWords";
 
-const Test = ({
-  words,
-  currentWordIndex,
-  incorrectWords,
-  isLoading,
-  currWordRef,
-  input,
-}) => {
+const Test = ({ currentWordIndex, incorrectWords, currWordRef, input }) => {
   const isInputMatching = () => {
     return words.get(currentWordIndex).slice(0, input.length) === input;
   };
+
+  const { words, isLoading } = useWords();
 
   return (
     <div className="text-container">

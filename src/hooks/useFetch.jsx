@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useReducer } from "react";
 
 const initialState = {
+  data: undefined,
   isLoading: true,
   error: undefined,
-  data: undefined,
 };
 
 const fetchReducer = (state, action) => {
@@ -51,6 +51,8 @@ const useFetch = (url) => {
       alreadyFetched.current = true;
     };
   }, []);
+
+  console.log(state);
 
   return state;
 };

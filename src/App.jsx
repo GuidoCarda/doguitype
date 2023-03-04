@@ -16,28 +16,26 @@ import { RxReload } from "react-icons/rx";
 import useTimer from "./hooks/useTimer";
 import useStopwatch from "./hooks/useStopwatch";
 import { motion, AnimatePresence } from "framer-motion";
-import Playground from "./components/Playground";
 import useWords from "./hooks/useWords";
 
 function App() {
+  const { words, isLoading, error, getWords, updateWords } = useWords();
+
   const [currentMode, setCurrentMode] = useState({
     type: "time",
     bound: 30,
   });
 
   const [input, setInput] = useState("");
-  const [words, setWords] = useState(new Map());
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
 
   const timer = useTimer();
   const stopwatch = useStopwatch();
 
   const inputRef = useRef(null);
   const currWordRef = useRef(null);
-  const fetchRun = useRef(false);
 
   const fetchWords = async () => {
     const res = await fetch(
@@ -47,23 +45,11 @@ function App() {
     return data;
   };
 
-  useEffect(() => {
-    // console.log("entro");
-    // if (fetchRun.current) return;
-    setIsLoading(true);
-    setTimeout(() => {
-      setWords(getWords(currentMode.type === "time" ? 200 : currentMode.bound));
-      setIsLoading(false);
-    }, 1000);
-    // return () => {
-    //   fetchRun.current = true;
-    // };
-  }, [currentMode]);
+  // setWords(getWords(currentMode.type === "time" ? 200 : currentMode.bound));
 
   //Move showing words when reached 2nd line
   useEffect(() => {
-    // if (!words.size || timer.time === 0 || isLoading) return;
-    if (!words.size || isLoading || words.size < 15 || isFinished) return;
+    if (isLoading || !words.size || words.size < 15 || isFinished) return;
 
     if (
       currWordRef?.current.offsetTop >= 35 &&
@@ -78,25 +64,19 @@ function App() {
           wordsCopy.delete(idx);
         }
       });
-      setWords(wordsCopy);
+      updateWords(wordsCopy);
     }
   }, [currWordRef.current]);
 
-  const getWords = (wordsQty) => {
-    return parseData(
-      dummyData[
-        Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
-      ]
-        .split(" ")
-        .slice(0, wordsQty)
-    );
-  };
-
-  const parseData = (data) => {
-    const map = new Map();
-    data.forEach((word, idx) => map.set(idx, word));
-    return map;
-  };
+  // const getWords = (wordsQty) => {
+  //   return parseData(
+  //     dummyData[
+  //       Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
+  //     ]
+  //       .split(" ")
+  //       .slice(0, wordsQty)
+  //   );
+  // };
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
@@ -141,24 +121,17 @@ function App() {
     setInput("");
     timer.reset();
     stopwatch.reset();
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-
-      return setWords(parseData(getWords(currentMode.bound)));
-    }, 1000);
+    getWords();
   };
 
   const handleModeSelection = (mode) => {
     setCurrentMode(mode);
+    getWords(mode.type === "time" ? 200 : mode.bound);
   };
 
   const isFinished =
     (currentMode.type === "time" && timer.state === "finished") ||
     (currentMode.type === "words" && currentWordIndex === currentMode.bound);
-
-  const contexto = useWords();
 
   return (
     <div className="container">
@@ -195,10 +168,8 @@ function App() {
           </div>
 
           <Test
-            words={words}
             currentWordIndex={currentWordIndex}
             incorrectWords={incorrectWords}
-            isLoading={isLoading}
             currWordRef={currWordRef}
             input={input}
           />
