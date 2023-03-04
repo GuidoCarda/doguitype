@@ -17,6 +17,7 @@ import useTimer from "./hooks/useTimer";
 import useStopwatch from "./hooks/useStopwatch";
 import { motion, AnimatePresence } from "framer-motion";
 import Playground from "./components/Playground";
+import useWords from "./hooks/useWords";
 
 function App() {
   const [currentMode, setCurrentMode] = useState({
@@ -157,9 +158,12 @@ function App() {
     (currentMode.type === "time" && timer.state === "finished") ||
     (currentMode.type === "words" && currentWordIndex === currentMode.bound);
 
+  const contexto = useWords();
+
   return (
     <div className="container">
       <Navbar />
+      <div>{contexto}</div>
       <Playground />
       {!isFinished && (
         <div className="test">
