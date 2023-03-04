@@ -1,38 +1,58 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useReducer } from "react";
+
+const initialState = {
+  isLoading: true,
+  error: undefined,
+  data: undefined,
+};
+
+const fetchReducer = (state, action) => {
+  switch (action.type) {
+    case "loading":
+      return { ...state, isLoading: action.payload };
+    case "fetched":
+      return { ...state, data: action.payload };
+    case "error":
+      return { ...state, error: action.payload };
+    default:
+      return state;
+  }
+};
 
 const useFetch = (url) => {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [state, dispatch] = useReducer(fetchReducer, initialState);
 
-  const alreadyFetched = useRef(null);
+  //To prevent state update on component unmount
+  const alreadyFetched = useRef(false);
 
   const fetchData = async (url) => {
-    setIsLoading(true);
+    dispatch({ type: "loading", payload: true });
     try {
       const res = await fetch(url);
-      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
 
-      setData(data);
+      const data = await res.json();
+      dispatch({ type: "fetched", payload: data });
     } catch (error) {
-      setError(error);
+      dispatch({ type: "error", payload: error });
     } finally {
-      setIsLoading(false);
+      dispatch({ type: "loading", payload: false });
     }
   };
 
   useEffect(() => {
+    if (!url) return;
     if (alreadyFetched.current) return;
     fetchData(url);
 
-    return () => (alreadyFetched.current = true);
+    return () => {
+      alreadyFetched.current = true;
+    };
   }, []);
 
-  const reFetch = (url) => {
-    fetchData(url);
-  };
-
-  return { data, isLoading, error, reFetch };
+  return state;
 };
 
 export default useFetch;

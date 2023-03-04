@@ -163,8 +163,6 @@ function App() {
   return (
     <div className="container">
       <Navbar />
-      <div>{contexto}</div>
-      <Playground />
       {!isFinished && (
         <div className="test">
           <AnimatePresence>
