@@ -16,6 +16,7 @@ import { RxReload } from "react-icons/rx";
 import useTimer from "./hooks/useTimer";
 import useStopwatch from "./hooks/useStopwatch";
 import { motion, AnimatePresence } from "framer-motion";
+import Playground from "./components/Playground";
 
 function App() {
   const [currentMode, setCurrentMode] = useState({
@@ -159,6 +160,7 @@ function App() {
   return (
     <div className="container">
       <Navbar />
+      <Playground />
       {!isFinished && (
         <div className="test">
           <AnimatePresence>
