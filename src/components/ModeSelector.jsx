@@ -1,10 +1,6 @@
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-
-const MODES = [
-  { type: "time", bounds: [15, 30, 60, 120] },
-  { type: "words", bounds: [10, 25, 50, 100] },
-];
+import { MODES } from "../constants";
 
 const modeSelector = {
   visible: { opacity: 1 },
