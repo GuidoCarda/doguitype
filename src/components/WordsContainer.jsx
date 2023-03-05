@@ -2,7 +2,12 @@ import React from "react";
 import { motion } from "framer-motion";
 import useWords from "../hooks/useWords";
 
-const Test = ({ currentWordIndex, incorrectWords, currWordRef, input }) => {
+const WordsContainer = ({
+  currentWordIndex,
+  incorrectWords,
+  currWordRef,
+  input,
+}) => {
   const isInputMatching = () => {
     return words.get(currentWordIndex).slice(0, input.length) === input;
   };
@@ -75,4 +80,4 @@ const Test = ({ currentWordIndex, incorrectWords, currWordRef, input }) => {
   );
 };
 
-export default Test;
+export default WordsContainer;

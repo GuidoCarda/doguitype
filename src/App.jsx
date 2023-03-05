@@ -6,20 +6,22 @@ import Navbar from "./components/Navbar";
 import Result from "./components/Result";
 import Footer from "./components/Footer";
 import ModeSelector from "./components/ModeSelector";
-import Test from "./components/Test";
-
-//temp data
-import { dummyData } from "./data";
+import WordsContainer from "./components/WordsContainer";
 
 //icons
 import { RxReload } from "react-icons/rx";
+
+//Custom hooks
 import useTimer from "./hooks/useTimer";
 import useStopwatch from "./hooks/useStopwatch";
-import { motion, AnimatePresence } from "framer-motion";
 import useWords from "./hooks/useWords";
 
+//Animations
+import { motion, AnimatePresence } from "framer-motion";
+import { checkStringEquality } from "./Utils";
+
 function App() {
-  const { words, isLoading, error, getWords, updateWords } = useWords();
+  const { words, isLoading, getWords, updateWords } = useWords();
 
   const [currentMode, setCurrentMode] = useState({
     type: "time",
@@ -34,27 +36,16 @@ function App() {
   const timer = useTimer();
   const stopwatch = useStopwatch();
 
-  const inputRef = useRef(null);
   const currWordRef = useRef(null);
-
-  const fetchWords = async () => {
-    const res = await fetch(
-      "https://random-word-api.herokuapp.com/word?number=100"
-    );
-    const data = await res.json();
-    return data;
-  };
-
-  // setWords(getWords(currentMode.type === "time" ? 200 : currentMode.bound));
 
   //Move showing words when reached 2nd line
   useEffect(() => {
     if (isLoading || !words.size || words.size < 15 || isFinished) return;
 
-    if (
-      currWordRef?.current.offsetTop >= 35 &&
-      currWordRef?.current.offsetLeft === 0
-    ) {
+    const crrWordY = currWordRef?.current.offsetTop;
+    const crrWordX = currWordRef?.current.offsetLeft;
+
+    if (crrWordY >= 35 && crrWordX === 0) {
       const currWordIdx = currWordRef?.current.id;
 
       const wordsCopy = new Map(words);
@@ -67,16 +58,6 @@ function App() {
       updateWords(wordsCopy);
     }
   }, [currWordRef.current]);
-
-  // const getWords = (wordsQty) => {
-  //   return parseData(
-  //     dummyData[
-  //       Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
-  //     ]
-  //       .split(" ")
-  //       .slice(0, wordsQty)
-  //   );
-  // };
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
@@ -133,10 +114,14 @@ function App() {
     (currentMode.type === "time" && timer.state === "finished") ||
     (currentMode.type === "words" && currentWordIndex === currentMode.bound);
 
+  const modeConfig = { currentMode, stopwatch, timer, currentWordIndex };
+  const formActions = { handleInput, handleOnKeyUp };
+
   return (
     <div className="container">
       <Navbar />
-      {!isFinished && (
+
+      {!isFinished ? (
         <div className="test">
           <AnimatePresence>
             {((currentMode.type === "time" && timer.state === "idle") ||
@@ -149,53 +134,27 @@ function App() {
             )}
           </AnimatePresence>
 
-          <motion.div
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            className="timer-container"
-          >
-            {currentMode.type === "time" && timer.state === "playing" && (
-              <span className="timer">{timer.time}</span>
-            )}
-          </motion.div>
+          <Mode {...modeConfig} />
 
-          <div className="timer-container">
-            {currentMode.type === "words" && stopwatch.isOn && (
-              <span className="timer">
-                {currentWordIndex}/{currentMode.bound}
-              </span>
-            )}
-          </div>
-
-          <Test
+          <WordsContainer
             currentWordIndex={currentWordIndex}
             incorrectWords={incorrectWords}
             currWordRef={currWordRef}
             input={input}
           />
 
-          <div className="form">
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onKeyUp={handleOnKeyUp}
-              onChange={handleInput}
-              disabled={isLoading}
-            />
-            <button
-              type="button"
-              onClick={handleRestart}
-              className="btn restart-btn"
-              disabled={isLoading}
-            >
-              <RxReload />
-            </button>
-          </div>
-        </div>
-      )}
+          <Form input={input} {...formActions} />
 
-      {isFinished && (
+          <button
+            type="button"
+            onClick={handleRestart}
+            className="btn restart-btn"
+            disabled={isLoading}
+          >
+            <RxReload />
+          </button>
+        </div>
+      ) : (
         <Result
           charCount={charCount}
           handleRestart={handleRestart}
@@ -205,14 +164,42 @@ function App() {
           }
         />
       )}
+
       <Footer />
     </div>
   );
 }
 
+const Form = ({ input, handleInput, handleOnKeyUp }) => {
+  const { isLoading } = useWords();
+
+  return (
+    <div className="form">
+      <input
+        type="text"
+        value={input}
+        onKeyUp={handleOnKeyUp}
+        onChange={handleInput}
+        disabled={isLoading}
+      />
+    </div>
+  );
+};
+
+const Mode = ({ currentMode, stopwatch, timer, currentWordIndex }) => {
+  return (
+    <div className="timer-container">
+      {currentMode.type === "words" && stopwatch.isOn && (
+        <span className="timer">
+          {currentWordIndex}/{currentMode.bound}
+        </span>
+      )}
+
+      {currentMode.type === "time" && timer.state === "playing" && (
+        <span className="timer">{timer.time}</span>
+      )}
+    </div>
+  );
+};
+
 export default App;
-
-export const calculateWPM = (charCount, time) => charCount / 5 / (time / 60);
-
-const checkCharEquality = (char1, char2) => char1 === char2;
-const checkStringEquality = (str1, str2) => str1 === str2;
