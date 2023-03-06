@@ -129,7 +129,6 @@ function App() {
 
   return (
     <div className="app">
-      <ThemePicker />
       <div className="container">
         <Navbar />
 

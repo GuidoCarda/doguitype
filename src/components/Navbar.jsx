@@ -1,6 +1,6 @@
 import React from "react";
 import { BsKeyboardFill } from "react-icons/bs";
-import useTheme from "../hooks/useTheme";
+import ThemePicker from "./ThemePicker";
 
 const Navbar = () => {
   return (
@@ -9,6 +9,7 @@ const Navbar = () => {
         <BsKeyboardFill />
         <span>doguitype</span>
       </div>
+      <ThemePicker />
     </header>
   );
 };

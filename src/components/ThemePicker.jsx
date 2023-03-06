@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { THEMES } from "../constants";
 import useTheme from "../hooks/useTheme";
-import { GrPaint } from "react-icons/gr";
+import { RiPaintFill } from "react-icons/ri";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ThemePicker = () => {
@@ -18,18 +18,18 @@ const ThemePicker = () => {
   return (
     <div className="themes-picker-container">
       <button
-        aria-label="pick a theme"
         className="theme-picker-toggler"
+        aria-label="pick a theme"
         onClick={handleToggle}
       >
-        <GrPaint />
+        <RiPaintFill />
       </button>
       <AnimatePresence>
         {show && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, left: "-6rem" }}
+            animate={{ opacity: 1, left: "-8rem" }}
+            exit={{ opacity: 0, left: "-6rem" }}
             transition={{ duration: 0.25 }}
             className="themes-container"
           >

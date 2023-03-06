@@ -127,6 +127,16 @@ button {
   color: var(--clr-accent);
 }
 
+@media screen and (max-width: 600px) {
+  .nav-logo {
+    font-size: 1.25rem;
+  }
+
+  .nav-logo > svg {
+    font-size: 2rem;
+  }
+}
+
 .test {
   position: relative;
   display: flex;
@@ -261,13 +271,8 @@ input.invisible {
   filter: grayscale(10);
 }
 
-.btn:hover {
-  /* background: hsla(var(--clr-accent), 50%); */
-  /* background-color: var(--); */
-}
-
 .btn:focus {
-  outline-color: rgba(219, 148, 77, 0.379);
+  outline-color: hsla(0, 0%, 53%, 0.338);
 }
 
 .finished-test {
@@ -372,15 +377,7 @@ input.invisible {
 /*  Theme Picker   */
 
 .themes-picker-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 1rem;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: row-reverse;
-  gap: 1rem;
-  align-items: center;
+  position: relative;
 }
 
 .theme-picker-toggler {
@@ -390,16 +387,29 @@ input.invisible {
   background: var(--components-bg);
 }
 
-.themes-container {
-  height: fit-content;
-  width: 2.25rem;
+.theme-picker-toggler {
+  display: grid;
+  place-content: center;
+}
 
-  display: flex;
-  flex-direction: column;
+.theme-picker-toggler > svg {
+  color: var(--clr-accent);
+  font-size: 1rem;
+}
+
+.themes-container {
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: -8rem;
+  width: fit-content;
+  height: 2.25rem;
+
   align-items: center;
+  display: flex;
   gap: 0.5rem;
 
-  padding-block: 1rem;
+  padding-inline: 1rem;
   border-radius: 0.3rem;
   background: var(--components-bg);
 }
