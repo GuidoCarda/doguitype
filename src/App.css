@@ -7,60 +7,60 @@
 }
 
 :root {
-  --test-font-correct: #4eb765;
-  --test-font-incorrect: #b82c22;
+  --test-font-correct: hsl(133, 42%, 51%);
+  --test-font-incorrect: hsl(4, 69%, 43%);
 }
 
-.theme-1 {
-  --bg-clr: #171717;
-  --font-clr: #dddddd;
+:root[color-scheme="theme-1"] {
+  --bg-clr: hsl(0, 0%, 9%);
+  --font-clr: hsl(0, 0%, 87%);
 
-  --test-font-clr: #8e909c;
-  --test-font-clr-active: #d3d7e2;
-  --test-bg-clr-active: #202020;
+  --test-font-clr: hsl(231, 7%, 58%);
+  --test-font-clr-active: hsl(224, 21%, 86%);
+  --test-bg-clr-active: hsl(0, 0%, 13%);
 
-  --components-bg: #3b3b3b;
+  --components-bg: hsl(0, 0%, 23%);
 
-  --clr-accent: rgb(218, 148, 77);
+  --clr-accent: hsl(30, 66%, 58%);
 }
 
-.theme-2 {
-  --bg-clr: #eaeef2;
-  --font-clr: #27282c;
+:root[color-scheme="theme-2"] {
+  --bg-clr: hsl(210, 24%, 93%);
+  --font-clr: hsl(228, 6%, 16%);
 
-  --test-font-clr: #767885;
-  --test-font-clr-active: #1d1e21;
-  --test-bg-clr-active: #d5d8e1;
+  --test-font-clr: hsl(232, 6%, 49%);
+  --test-font-clr-active: hsl(225, 6%, 12%);
+  --test-bg-clr-active: hsl(225, 17%, 86%);
 
-  --components-bg: #ccced6;
+  --components-bg: hsl(228, 11%, 82%);
 
-  --clr-accent: rgb(88, 148, 208);
+  --clr-accent: hsl(210, 56%, 58%);
 }
 
-.theme-3 {
-  --bg-clr: #1f1e22;
-  --font-clr: #dddddd;
+:root[color-scheme="theme-3"] {
+  --bg-clr: hsl(255, 6%, 13%);
+  --font-clr: hsl(0, 0%, 87%);
 
-  --test-font-clr: #8e909c;
-  --test-font-clr-active: #d3d7e2;
-  --test-bg-clr-active: #202020;
+  --test-font-clr: hsl(231, 7%, 58%);
+  --test-font-clr-active: hsl(224, 21%, 86%);
+  --test-bg-clr-active: hsl(0, 0%, 13%);
 
-  --components-bg: #3b3b3b;
+  --components-bg: hsl(0, 0%, 23%);
 
-  --clr-accent: rgb(185, 77, 218);
+  --clr-accent: hsl(286, 66%, 58%);
 }
 
-.theme-4 {
-  --bg-clr: #221e1e;
-  --font-clr: #dddddd;
+:root[color-scheme="theme-4"] {
+  --bg-clr: hsl(0, 6%, 13%);
+  --font-clr: hsl(0, 0%, 87%);
 
-  --test-font-clr: #8e909c;
-  --test-font-clr-active: #d3d7e2;
-  --test-bg-clr-active: #413535;
+  --test-font-clr: hsl(231, 7%, 58%);
+  --test-font-clr-active: hsl(224, 21%, 86%);
+  --test-bg-clr-active: hsl(0, 10%, 23%);
 
-  --components-bg: #3c3939;
+  --components-bg: hsl(0, 3%, 23%);
 
-  --clr-accent: rgb(218, 77, 110);
+  --clr-accent: hsl(346, 66%, 58%);
 }
 
 .app {
@@ -230,7 +230,6 @@ input.invisible {
   user-select: none;
 
   background-color: var(--clr-accent);
-  color: hsl(30, 66%, 20%);
 }
 
 .btn.restart-btn {
@@ -244,7 +243,9 @@ input.invisible {
 }
 
 .btn:hover {
-  /* background-color: hsl(30, 66%, 55%); */
+  --test: hsl(101, 14%, 40%);
+  background: hsla(var(--test), 0.5);
+  /* background: hsla(var(--clr-accent), 50%); */
   /* background-color: var(--); */
 }
 
