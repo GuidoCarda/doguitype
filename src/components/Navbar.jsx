@@ -1,5 +1,6 @@
 import React from "react";
 import { BsKeyboardFill } from "react-icons/bs";
+import useTheme from "../hooks/useTheme";
 
 const Navbar = () => {
   return (

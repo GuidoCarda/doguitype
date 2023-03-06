@@ -43,7 +43,7 @@
 
   --test-font-clr: hsl(231, 7%, 58%);
   --test-font-clr-active: hsl(224, 21%, 86%);
-  --test-bg-clr-active: hsl(0, 0%, 13%);
+  --test-bg-clr-active: hsl(0, 0%, 18%);
 
   --components-bg: hsl(0, 0%, 23%);
 
@@ -51,6 +51,19 @@
 }
 
 :root[color-scheme="theme-4"] {
+  --bg-clr: hsl(330, 22%, 93%);
+  --font-clr: hsl(336, 6%, 25%);
+
+  --test-font-clr: hsl(340, 6%, 49%);
+  --test-font-clr-active: hsl(340, 5%, 25%);
+  --test-bg-clr-active: hsl(340, 17%, 86%);
+
+  --components-bg: hsl(336, 11%, 82%);
+
+  --clr-accent: hsl(346, 66%, 58%);
+}
+
+:root[color-scheme="theme-5"] {
   --bg-clr: hsl(0, 6%, 13%);
   --font-clr: hsl(0, 0%, 87%);
 
@@ -63,7 +76,12 @@
   --clr-accent: hsl(346, 66%, 58%);
 }
 
+button {
+  border: none;
+}
+
 .app {
+  position: relative;
   background-color: var(--bg-clr);
   color: var(--font-clr);
 }
@@ -87,6 +105,7 @@
 }
 
 .nav-bar {
+  justify-content: space-between;
 }
 
 .footer {
@@ -348,4 +367,76 @@ input.invisible {
 .stopwatch-precario button {
   padding: 0.3rem 1rem;
   font-family: inherit;
+}
+
+/*  Theme Picker   */
+
+.themes-picker-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 1rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 1rem;
+  align-items: center;
+}
+
+.theme-picker-toggler {
+  height: 2.25rem;
+  width: 2.25rem;
+  border-radius: 0.3rem;
+  background: var(--components-bg);
+}
+
+.themes-container {
+  height: fit-content;
+  width: 2.25rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding-block: 1rem;
+  border-radius: 0.3rem;
+  background: var(--components-bg);
+}
+
+.themes-container > button {
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  border: none;
+}
+
+.themes-container > button:nth-child(1) {
+  background: linear-gradient(
+    90deg,
+    rgba(32, 31, 35, 1) 50%,
+    hsl(30, 66%, 58%) 50%
+  );
+}
+
+.themes-container > button:nth-child(2) {
+  background: linear-gradient(
+    90deg,
+    hsl(210, 24%, 93%) 50%,
+    hsl(210, 56%, 58%) 50%
+  );
+}
+.themes-container > button:nth-child(3) {
+  background: linear-gradient(
+    90deg,
+    rgba(32, 31, 35, 1) 50%,
+    rgba(186, 77, 219, 1) 50%
+  );
+}
+.themes-container > button:nth-child(4) {
+  background: linear-gradient(
+    90deg,
+    hsl(330, 22%, 93%) 50%,
+    hsl(346, 66%, 58%) 50%
+  );
 }
