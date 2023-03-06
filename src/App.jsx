@@ -42,6 +42,8 @@ function App() {
   useEffect(() => {
     if (isLoading || !words.size || words.size < 15 || isFinished) return;
 
+    console.log(currWordRef);
+
     const crrWordY = currWordRef?.current.offsetTop;
     const crrWordX = currWordRef?.current.offsetLeft;
 
@@ -114,8 +116,16 @@ function App() {
     (currentMode.type === "time" && timer.state === "finished") ||
     (currentMode.type === "words" && currentWordIndex === currentMode.bound);
 
+  const isTyping = timer.state === "playing" || stopwatch.isOn;
+
   const modeConfig = { currentMode, stopwatch, timer, currentWordIndex };
   const formActions = { handleInput, handleOnKeyUp };
+  const resultProps = {
+    charCount,
+    handleRestart,
+    currentMode,
+    time: currentMode.type === "time" ? currentMode.bound : stopwatch.time,
+  };
 
   return (
     <div className="container">
@@ -124,8 +134,7 @@ function App() {
       {!isFinished ? (
         <div className="test">
           <AnimatePresence>
-            {((currentMode.type === "time" && timer.state === "idle") ||
-              (currentMode.type === "words" && !stopwatch.isOn)) && (
+            {!isTyping && (
               <ModeSelector
                 key={"mode-selector"}
                 handleModeSelection={handleModeSelection}
@@ -155,14 +164,7 @@ function App() {
           </button>
         </div>
       ) : (
-        <Result
-          charCount={charCount}
-          handleRestart={handleRestart}
-          currentMode={currentMode}
-          time={
-            currentMode.type === "time" ? currentMode.bound : stopwatch.time
-          }
-        />
+        <Result {...resultProps} />
       )}
 
       <Footer />
@@ -187,18 +189,33 @@ const Form = ({ input, handleInput, handleOnKeyUp }) => {
 };
 
 const Mode = ({ currentMode, stopwatch, timer, currentWordIndex }) => {
+  const wordsLeftProps = {
+    stopwatch,
+    currentWordIndex,
+    bound: currentMode.bound,
+  };
+
   return (
     <div className="timer-container">
-      {currentMode.type === "words" && stopwatch.isOn && (
-        <span className="timer">
-          {currentWordIndex}/{currentMode.bound}
-        </span>
-      )}
-
-      {currentMode.type === "time" && timer.state === "playing" && (
-        <span className="timer">{timer.time}</span>
-      )}
+      {currentMode.type === "time" && <Timer timer={timer} />}
+      {currentMode.type === "words" && <WordsLeft {...wordsLeftProps} />}
     </div>
+  );
+};
+
+const Timer = ({ timer }) => {
+  if (timer.state !== "playing") return;
+
+  return <span className="timer">{timer.time}</span>;
+};
+
+const WordsLeft = ({ stopwatch, currentWordIndex, bound }) => {
+  if (!stopwatch.isOn) return;
+
+  return (
+    <span className="timer">
+      {currentWordIndex}/{bound}
+    </span>
   );
 };
 

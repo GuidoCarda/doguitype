@@ -234,6 +234,7 @@ input.invisible {
 }
 
 .btn.restart-btn {
+  margin-top: 1.5rem;
   margin-inline: auto;
 }
 
