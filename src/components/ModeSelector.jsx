@@ -21,6 +21,7 @@ const ModeSelector = ({ handleModeSelection, currentMode }) => {
       {MODES.map(({ type, bounds }) => {
         return (
           <button
+            aria-label={`${type} mode`}
             onClick={() =>
               handleModeSelection({
                 type,
@@ -40,6 +41,9 @@ const ModeSelector = ({ handleModeSelection, currentMode }) => {
             MODES.findIndex((mode) => mode.type === currentMode.type)
           ].bounds.map((bound) => (
             <motion.button
+              aria-label={`${bound} ${
+                currentMode.type === "time" ? "seconds" : "words"
+              }`}
               initial="hidden"
               animate="visible"
               variants={modeSelector}

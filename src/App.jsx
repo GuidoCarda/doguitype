@@ -102,7 +102,7 @@ function App() {
     setInput("");
     timer.reset();
     stopwatch.reset();
-    getWords();
+    getWords(currentMode === "words" ? currentMode.bound : null);
   };
 
   const handleModeSelection = (mode) => {
@@ -116,6 +116,7 @@ function App() {
 
   const isTyping = timer.state === "playing" || stopwatch.isOn;
 
+  const wordsData = { currentWordIndex, incorrectWords, currWordRef };
   const modeConfig = { currentMode, stopwatch, timer, currentWordIndex };
   const formActions = { handleInput, handleOnKeyUp };
   const resultProps = {
@@ -143,17 +144,13 @@ function App() {
 
           <Mode {...modeConfig} />
 
-          <WordsContainer
-            currentWordIndex={currentWordIndex}
-            incorrectWords={incorrectWords}
-            currWordRef={currWordRef}
-            input={input}
-          />
+          <WordsContainer {...wordsData} input={input} />
 
           <Form input={input} {...formActions} />
 
           <button
             type="button"
+            aria-label="restart test"
             onClick={handleRestart}
             className="btn restart-btn"
             disabled={isLoading}

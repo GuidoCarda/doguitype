@@ -11,12 +11,11 @@ const Result = ({ charCount, handleRestart, time, currentMode }) => {
       transition={{ duration: 0.75, type: "tween" }}
       className="finished-test"
     >
-      {currentMode.type === "words" && (
+      {currentMode.type === "words" ? (
         <h2>
           Finalizaste el test! Completaste las {currentMode.bound} palabras.
         </h2>
-      )}
-      {currentMode.type === "time" && (
+      ) : (
         <h2>
           Finalizaste el test! Se cumplieron los {currentMode.bound} segundos.
         </h2>
@@ -27,7 +26,12 @@ const Result = ({ charCount, handleRestart, time, currentMode }) => {
         <h2>{calculateWPM(charCount, time).toFixed(0)} WPM</h2>
       </div>
 
-      <button type="button" className="btn reset-btn" onClick={handleRestart}>
+      <button
+        type="button"
+        aria-label="restart test"
+        className="btn reset-btn"
+        onClick={handleRestart}
+      >
         <RxReload />
       </button>
     </motion.div>
