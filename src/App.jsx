@@ -17,7 +17,7 @@ import useStopwatch from "./hooks/useStopwatch";
 import useWords from "./hooks/useWords";
 
 //Animations
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { checkStringEquality } from "./Utils";
 
 function App() {
@@ -42,8 +42,6 @@ function App() {
   useEffect(() => {
     if (isLoading || !words.size || words.size < 15 || isFinished) return;
 
-    console.log(currWordRef);
-
     const crrWordY = currWordRef?.current.offsetTop;
     const crrWordX = currWordRef?.current.offsetLeft;
 
@@ -52,7 +50,7 @@ function App() {
 
       const wordsCopy = new Map(words);
 
-      wordsCopy.forEach((value, idx) => {
+      wordsCopy.forEach((_, idx) => {
         if (idx < currWordIdx) {
           wordsCopy.delete(idx);
         }
