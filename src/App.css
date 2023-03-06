@@ -243,8 +243,6 @@ input.invisible {
 }
 
 .btn:hover {
-  --test: hsl(101, 14%, 40%);
-  background: hsla(var(--test), 0.5);
   /* background: hsla(var(--clr-accent), 50%); */
   /* background-color: var(--); */
 }
