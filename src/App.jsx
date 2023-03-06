@@ -19,9 +19,11 @@ import useWords from "./hooks/useWords";
 //Animations
 import { AnimatePresence } from "framer-motion";
 import { checkStringEquality } from "./Utils";
+import useTheme from "./hooks/useTheme";
 
 function App() {
   const { words, isLoading, getWords, updateWords } = useWords();
+  const [theme] = useTheme();
 
   const [currentMode, setCurrentMode] = useState({
     type: "time",
@@ -127,42 +129,45 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <Navbar />
+    <div className={`app ${theme}`}>
+      <ThemePicker />
+      <div className="container">
+        <Navbar />
 
-      {!isFinished ? (
-        <div className="test">
-          <AnimatePresence>
-            {!isTyping && (
-              <ModeSelector
-                key={"mode-selector"}
-                handleModeSelection={handleModeSelection}
-                currentMode={currentMode}
-              />
-            )}
-          </AnimatePresence>
+        {!isFinished ? (
+          <div className="test">
+            <AnimatePresence>
+              {!isTyping && (
+                <ModeSelector
+                  key={"mode-selector"}
+                  handleModeSelection={handleModeSelection}
+                  currentMode={currentMode}
+                />
+              )}
+            </AnimatePresence>
 
-          <Mode {...modeConfig} />
+            <Mode {...modeConfig} />
 
-          <WordsContainer {...wordsData} input={input} />
+            <WordsContainer {...wordsData} input={input} />
 
-          <Form input={input} {...formActions} />
+            <Form input={input} {...formActions} />
 
-          <button
-            type="button"
-            aria-label="restart test"
-            onClick={handleRestart}
-            className="btn restart-btn"
-            disabled={isLoading}
-          >
-            <RxReload />
-          </button>
-        </div>
-      ) : (
-        <Result {...resultProps} />
-      )}
+            <button
+              type="button"
+              aria-label="restart test"
+              onClick={handleRestart}
+              className="btn restart-btn"
+              disabled={isLoading}
+            >
+              <RxReload />
+            </button>
+          </div>
+        ) : (
+          <Result {...resultProps} />
+        )}
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 }
@@ -211,6 +216,18 @@ const WordsLeft = ({ stopwatch, currentWordIndex, bound }) => {
     <span className="timer">
       {currentWordIndex}/{bound}
     </span>
+  );
+};
+
+const ThemePicker = () => {
+  const [, setTheme] = useTheme();
+
+  return (
+    <div style={{ position: "absolute", top: "10rem", marginInline: "auto" }}>
+      <button onClick={() => setTheme("theme-1")}>Tema 1</button>
+      <button onClick={() => setTheme("theme-2")}>Tema 2</button>
+      <button onClick={() => setTheme("theme-3")}>Tema 3</button>
+    </div>
   );
 };
 

@@ -63,7 +63,7 @@
   --clr-accent: rgb(218, 77, 110);
 }
 
-#root {
+.app {
   background-color: var(--bg-clr);
   color: var(--font-clr);
 }

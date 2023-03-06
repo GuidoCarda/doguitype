@@ -6,11 +6,14 @@ import "./index.css";
 
 //Word ContextProvider
 import WordsProvider from "./context/WordsContext";
+import ThemeProvider from "./context/ThemeContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <WordsProvider>
-      <App />
-    </WordsProvider>
+    <ThemeProvider>
+      <WordsProvider>
+        <App />
+      </WordsProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );
