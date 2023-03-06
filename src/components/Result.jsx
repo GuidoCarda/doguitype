@@ -1,7 +1,7 @@
 import React from "react";
 import { RxReload } from "react-icons/rx";
-import { calculateWPM } from "../App";
 import { motion } from "framer-motion";
+import { calculateWPM } from "../Utils";
 
 const Result = ({ charCount, handleRestart, time, currentMode }) => {
   return (

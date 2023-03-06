@@ -6,95 +6,58 @@ import Navbar from "./components/Navbar";
 import Result from "./components/Result";
 import Footer from "./components/Footer";
 import ModeSelector from "./components/ModeSelector";
-import Test from "./components/Test";
-
-//temp data
-import { dummyData } from "./data";
+import WordsContainer from "./components/WordsContainer";
 
 //icons
 import { RxReload } from "react-icons/rx";
+
+//Custom hooks
 import useTimer from "./hooks/useTimer";
 import useStopwatch from "./hooks/useStopwatch";
-import { motion, AnimatePresence } from "framer-motion";
+import useWords from "./hooks/useWords";
+
+//Animations
+import { AnimatePresence } from "framer-motion";
+import { checkStringEquality } from "./Utils";
 
 function App() {
+  const { words, isLoading, getWords, updateWords } = useWords();
+
   const [currentMode, setCurrentMode] = useState({
     type: "time",
     bound: 30,
   });
 
   const [input, setInput] = useState("");
-  const [words, setWords] = useState(new Map());
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [incorrectWords, SetIncorrectWords] = useState(() => new Set());
   const [charCount, setCharCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
 
   const timer = useTimer();
   const stopwatch = useStopwatch();
 
-  const inputRef = useRef(null);
   const currWordRef = useRef(null);
-  const fetchRun = useRef(false);
-
-  const fetchWords = async () => {
-    const res = await fetch(
-      "https://random-word-api.herokuapp.com/word?number=100"
-    );
-    const data = await res.json();
-    return data;
-  };
-
-  useEffect(() => {
-    // console.log("entro");
-    // if (fetchRun.current) return;
-    setIsLoading(true);
-    setTimeout(() => {
-      setWords(getWords(currentMode.type === "time" ? 200 : currentMode.bound));
-      setIsLoading(false);
-    }, 1000);
-    // return () => {
-    //   fetchRun.current = true;
-    // };
-  }, [currentMode]);
 
   //Move showing words when reached 2nd line
   useEffect(() => {
-    // if (!words.size || timer.time === 0 || isLoading) return;
-    if (!words.size || isLoading || words.size < 15 || isFinished) return;
+    if (isLoading || !words.size || words.size < 15 || isFinished) return;
 
-    if (
-      currWordRef?.current.offsetTop >= 35 &&
-      currWordRef?.current.offsetLeft === 0
-    ) {
+    const crrWordY = currWordRef?.current.offsetTop;
+    const crrWordX = currWordRef?.current.offsetLeft;
+
+    if (crrWordY >= 35 && crrWordX === 0) {
       const currWordIdx = currWordRef?.current.id;
 
       const wordsCopy = new Map(words);
 
-      wordsCopy.forEach((value, idx) => {
+      wordsCopy.forEach((_, idx) => {
         if (idx < currWordIdx) {
           wordsCopy.delete(idx);
         }
       });
-      setWords(wordsCopy);
+      updateWords(wordsCopy);
     }
   }, [currWordRef.current]);
-
-  const getWords = (wordsQty) => {
-    return parseData(
-      dummyData[
-        Math.floor(Math.random() * (0 + (dummyData.length - 1) + 1) + 0)
-      ]
-        .split(" ")
-        .slice(0, wordsQty)
-    );
-  };
-
-  const parseData = (data) => {
-    const map = new Map();
-    data.forEach((word, idx) => map.set(idx, word));
-    return map;
-  };
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
@@ -139,31 +102,37 @@ function App() {
     setInput("");
     timer.reset();
     stopwatch.reset();
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-
-      return setWords(parseData(getWords(currentMode.bound)));
-    }, 1000);
+    getWords();
   };
 
   const handleModeSelection = (mode) => {
     setCurrentMode(mode);
+    getWords(mode.type === "time" ? 200 : mode.bound);
   };
 
   const isFinished =
     (currentMode.type === "time" && timer.state === "finished") ||
     (currentMode.type === "words" && currentWordIndex === currentMode.bound);
 
+  const isTyping = timer.state === "playing" || stopwatch.isOn;
+
+  const modeConfig = { currentMode, stopwatch, timer, currentWordIndex };
+  const formActions = { handleInput, handleOnKeyUp };
+  const resultProps = {
+    charCount,
+    handleRestart,
+    currentMode,
+    time: currentMode.type === "time" ? currentMode.bound : stopwatch.time,
+  };
+
   return (
     <div className="container">
       <Navbar />
-      {!isFinished && (
+
+      {!isFinished ? (
         <div className="test">
           <AnimatePresence>
-            {((currentMode.type === "time" && timer.state === "idle") ||
-              (currentMode.type === "words" && !stopwatch.isOn)) && (
+            {!isTyping && (
               <ModeSelector
                 key={"mode-selector"}
                 handleModeSelection={handleModeSelection}
@@ -172,72 +141,80 @@ function App() {
             )}
           </AnimatePresence>
 
-          <motion.div
-            initial={{ y: 100 }}
-            animate={{ y: 0 }}
-            className="timer-container"
-          >
-            {currentMode.type === "time" && timer.state === "playing" && (
-              <span className="timer">{timer.time}</span>
-            )}
-          </motion.div>
+          <Mode {...modeConfig} />
 
-          <div className="timer-container">
-            {currentMode.type === "words" && stopwatch.isOn && (
-              <span className="timer">
-                {currentWordIndex}/{currentMode.bound}
-              </span>
-            )}
-          </div>
-
-          <Test
-            words={words}
+          <WordsContainer
             currentWordIndex={currentWordIndex}
             incorrectWords={incorrectWords}
-            isLoading={isLoading}
             currWordRef={currWordRef}
             input={input}
           />
 
-          <div className="form">
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onKeyUp={handleOnKeyUp}
-              onChange={handleInput}
-              disabled={isLoading}
-            />
-            <button
-              type="button"
-              onClick={handleRestart}
-              className="btn restart-btn"
-              disabled={isLoading}
-            >
-              <RxReload />
-            </button>
-          </div>
+          <Form input={input} {...formActions} />
+
+          <button
+            type="button"
+            onClick={handleRestart}
+            className="btn restart-btn"
+            disabled={isLoading}
+          >
+            <RxReload />
+          </button>
         </div>
+      ) : (
+        <Result {...resultProps} />
       )}
 
-      {isFinished && (
-        <Result
-          charCount={charCount}
-          handleRestart={handleRestart}
-          currentMode={currentMode}
-          time={
-            currentMode.type === "time" ? currentMode.bound : stopwatch.time
-          }
-        />
-      )}
       <Footer />
     </div>
   );
 }
 
+const Form = ({ input, handleInput, handleOnKeyUp }) => {
+  const { isLoading } = useWords();
+
+  return (
+    <div className="form">
+      <input
+        type="text"
+        value={input}
+        onKeyUp={handleOnKeyUp}
+        onChange={handleInput}
+        disabled={isLoading}
+      />
+    </div>
+  );
+};
+
+const Mode = ({ currentMode, stopwatch, timer, currentWordIndex }) => {
+  const wordsLeftProps = {
+    stopwatch,
+    currentWordIndex,
+    bound: currentMode.bound,
+  };
+
+  return (
+    <div className="timer-container">
+      {currentMode.type === "time" && <Timer timer={timer} />}
+      {currentMode.type === "words" && <WordsLeft {...wordsLeftProps} />}
+    </div>
+  );
+};
+
+const Timer = ({ timer }) => {
+  if (timer.state !== "playing") return;
+
+  return <span className="timer">{timer.time}</span>;
+};
+
+const WordsLeft = ({ stopwatch, currentWordIndex, bound }) => {
+  if (!stopwatch.isOn) return;
+
+  return (
+    <span className="timer">
+      {currentWordIndex}/{bound}
+    </span>
+  );
+};
+
 export default App;
-
-export const calculateWPM = (charCount, time) => charCount / 5 / (time / 60);
-
-const checkCharEquality = (char1, char2) => char1 === char2;
-const checkStringEquality = (str1, str2) => str1 === str2;

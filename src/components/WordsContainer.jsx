@@ -1,14 +1,15 @@
 import React from "react";
 import { motion } from "framer-motion";
+import useWords from "../hooks/useWords";
 
-const Test = ({
-  words,
+const WordsContainer = ({
   currentWordIndex,
   incorrectWords,
-  isLoading,
   currWordRef,
   input,
 }) => {
+  const { words, isLoading } = useWords();
+
   const isInputMatching = () => {
     return words.get(currentWordIndex).slice(0, input.length) === input;
   };
@@ -16,14 +17,7 @@ const Test = ({
   return (
     <div className="text-container">
       {isLoading ? (
-        <motion.h2
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ repeat: Infinity, duration: 1 }}
-        >
-          loading...
-        </motion.h2>
+        <Loader />
       ) : (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -79,4 +73,17 @@ const Test = ({
   );
 };
 
-export default Test;
+const Loader = () => {
+  return (
+    <motion.h2
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ repeat: Infinity, duration: 1 }}
+    >
+      loading...
+    </motion.h2>
+  );
+};
+
+export default WordsContainer;
