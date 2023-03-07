@@ -78,7 +78,7 @@ function App() {
       stopwatch.start();
     }
 
-    if (pressedKeyCode === 32 || pressedKeyCode === 229) {
+    if (pressedKeyCode === 32) {
       if (!checkStringEquality(input, words.get(currentWordIndex))) {
         SetIncorrectWords(incorrectWords.add(currentWordIndex));
       }
