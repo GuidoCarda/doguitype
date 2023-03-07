@@ -1,11 +1,13 @@
+import { forwardRef } from "react";
 import useWords from "../hooks/useWords";
 
-const Form = ({ input, handleInput, handleOnKeyUp }) => {
+const Form = ({ input, handleInput, handleOnKeyUp }, ref) => {
   const { isLoading } = useWords();
 
   return (
     <div className="form">
       <input
+        ref={ref}
         type="text"
         value={input}
         onKeyUp={handleOnKeyUp}
@@ -16,4 +18,4 @@ const Form = ({ input, handleInput, handleOnKeyUp }) => {
   );
 };
 
-export default Form;
+export default forwardRef(Form);

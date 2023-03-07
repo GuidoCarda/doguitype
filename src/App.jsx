@@ -39,6 +39,7 @@ function App() {
   const stopwatch = useStopwatch();
 
   const currWordRef = useRef(null);
+  const inputRef = useRef(null);
 
   //Move showing words when reached 2nd line
   useEffect(() => {
@@ -60,6 +61,12 @@ function App() {
       updateWords(wordsCopy);
     }
   }, [currWordRef.current]);
+
+  //Set focus to input after fetch
+  useEffect(() => {
+    if (isLoading) return;
+    setInputFocus();
+  }, [isLoading]);
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
@@ -95,6 +102,11 @@ function App() {
         stopwatch.stop();
       }
     }
+  };
+
+  const setInputFocus = () => {
+    if (!inputRef.current) return;
+    inputRef.current.focus();
   };
 
   const handleRestart = () => {
@@ -149,7 +161,7 @@ function App() {
 
             <WordsContainer {...wordsData} input={input} />
 
-            <Form input={input} {...formActions} />
+            <Form input={input} {...formActions} ref={inputRef} />
 
             <button
               type="button"
