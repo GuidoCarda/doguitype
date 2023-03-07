@@ -68,7 +68,7 @@ function App() {
   const handleOnKeyUp = (e) => {
     const pressedKeyCode = e.keyCode;
 
-    if (pressedKeyCode === 9 || pressedKeyCode === 229) return;
+    if (pressedKeyCode === 9) return;
 
     if (currentMode.type === "time" && timer.time === 0) {
       timer.set(currentMode.bound);
@@ -78,7 +78,7 @@ function App() {
       stopwatch.start();
     }
 
-    if (pressedKeyCode === 32) {
+    if (pressedKeyCode === 32 || pressedKeyCode === 229) {
       if (!checkStringEquality(input, words.get(currentWordIndex))) {
         SetIncorrectWords(incorrectWords.add(currentWordIndex));
       }
