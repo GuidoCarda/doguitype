@@ -9,7 +9,7 @@ const Mode = ({ currentMode, stopwatch, timer, currentWordIndex }) => {
   };
 
   return (
-    <div className="timer-container">
+    <div className="mode-container">
       {currentMode.type === "time" && <Timer timer={timer} />}
       {currentMode.type === "words" && <WordsLeft {...wordsLeftProps} />}
     </div>

@@ -2,7 +2,7 @@ const WordsLeft = ({ stopwatch, currentWordIndex, bound }) => {
   if (!stopwatch.isOn) return;
 
   return (
-    <span className="timer">
+    <span className="mode-value">
       {currentWordIndex}/{bound}
     </span>
   );
