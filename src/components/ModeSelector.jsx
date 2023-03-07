@@ -15,6 +15,8 @@ const ModeSelector = ({ handleModeSelection, currentMode }) => {
     [currentMode]
   );
 
+  const mode = MODES[currModeIdx()].bounds;
+
   return (
     <motion.div
       className="mode-selector-container"
@@ -42,7 +44,7 @@ const ModeSelector = ({ handleModeSelection, currentMode }) => {
       })}
       <div key={currentMode.type}>
         <AnimatePresence>
-          {MODES[currModeIdx()].bounds.map((bound) => (
+          {mode.map((bound) => (
             <motion.button
               aria-label={`${bound} ${
                 currentMode.type === "time" ? "seconds" : "words"

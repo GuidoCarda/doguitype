@@ -7,6 +7,8 @@ import Result from "./components/Result";
 import Footer from "./components/Footer";
 import ModeSelector from "./components/ModeSelector";
 import WordsContainer from "./components/WordsContainer";
+import Mode from "./components/Mode";
+import Form from "./components/Form";
 
 //icons
 import { RxReload } from "react-icons/rx";
@@ -19,8 +21,6 @@ import useWords from "./hooks/useWords";
 //Animations
 import { AnimatePresence } from "framer-motion";
 import { checkStringEquality } from "./Utils";
-import Mode from "./components/Mode";
-import Form from "./components/Form";
 
 function App() {
   const { words, isLoading, getWords, updateWords } = useWords();

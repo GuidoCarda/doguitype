@@ -3,11 +3,17 @@ import { RxReload } from "react-icons/rx";
 import { motion } from "framer-motion";
 import { calculateWPM } from "../Utils";
 
+const resultVariants = {
+  enter: { opacity: 0, y: 20 },
+  exit: { opacity: 1, y: 0 },
+};
+
 const Result = ({ charCount, handleRestart, time, currentMode }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial="enter"
+      animate="exit"
+      variants={resultVariants}
       transition={{ duration: 0.75, type: "tween" }}
       className="finished-test"
     >
@@ -21,10 +27,15 @@ const Result = ({ charCount, handleRestart, time, currentMode }) => {
         </h2>
       )}
 
-      <div className="result">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 10 }}
+        transition={{ delay: 0.75 }}
+        className="result"
+      >
         <h2>Tu resultado!</h2>
         <h2>{calculateWPM(charCount, time).toFixed(0)} WPM</h2>
-      </div>
+      </motion.div>
 
       <button
         type="button"
