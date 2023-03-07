@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { THEMES } from "../constants";
-import useTheme from "../hooks/useTheme";
 import { RiPaintFill } from "react-icons/ri";
 import { motion, AnimatePresence } from "framer-motion";
+import useTheme from "../hooks/useTheme";
+
+const themePickerVariants = {
+  hidden: { opacity: 0, left: "-6rem" },
+  visible: { opacity: 1, left: "-8rem" },
+};
 
 const ThemePicker = () => {
   const [show, setShow] = useState(false);
@@ -27,9 +32,10 @@ const ThemePicker = () => {
       <AnimatePresence>
         {show && (
           <motion.div
-            initial={{ opacity: 0, left: "-6rem" }}
-            animate={{ opacity: 1, left: "-8rem" }}
-            exit={{ opacity: 0, left: "-6rem" }}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={themePickerVariants}
             transition={{ duration: 0.25 }}
             className="themes-container"
           >

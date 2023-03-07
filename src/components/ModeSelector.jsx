@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MODES } from "../constants";
 
@@ -10,6 +10,11 @@ const modeSelector = {
 };
 
 const ModeSelector = ({ handleModeSelection, currentMode }) => {
+  const currModeIdx = useCallback(
+    () => MODES.findIndex(({ type }) => type === currentMode.type),
+    [currentMode]
+  );
+
   return (
     <motion.div
       className="mode-selector-container"
@@ -37,9 +42,7 @@ const ModeSelector = ({ handleModeSelection, currentMode }) => {
       })}
       <div key={currentMode.type}>
         <AnimatePresence>
-          {MODES[
-            MODES.findIndex((mode) => mode.type === currentMode.type)
-          ].bounds.map((bound) => (
+          {MODES[currModeIdx()].bounds.map((bound) => (
             <motion.button
               aria-label={`${bound} ${
                 currentMode.type === "time" ? "seconds" : "words"

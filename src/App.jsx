@@ -21,6 +21,7 @@ import { AnimatePresence } from "framer-motion";
 import { checkStringEquality } from "./Utils";
 import ThemePicker from "./components/ThemePicker";
 import Mode from "./components/Mode";
+import Form from "./components/Form";
 
 function App() {
   const { words, isLoading, getWords, updateWords } = useWords();
@@ -170,21 +171,5 @@ function App() {
     </div>
   );
 }
-
-const Form = ({ input, handleInput, handleOnKeyUp }) => {
-  const { isLoading } = useWords();
-
-  return (
-    <div className="form">
-      <input
-        type="text"
-        value={input}
-        onKeyUp={handleOnKeyUp}
-        onChange={handleInput}
-        disabled={isLoading}
-      />
-    </div>
-  );
-};
 
 export default App;
