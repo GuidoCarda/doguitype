@@ -19,7 +19,8 @@ import useWords from "./hooks/useWords";
 //Animations
 import { AnimatePresence } from "framer-motion";
 import { checkStringEquality } from "./Utils";
-import ThemePicker from "./components/ThemePicker";
+import Mode from "./components/Mode";
+import Form from "./components/Form";
 
 function App() {
   const { words, isLoading, getWords, updateWords } = useWords();
@@ -103,7 +104,8 @@ function App() {
     setInput("");
     timer.reset();
     stopwatch.reset();
-    getWords(currentMode === "words" ? currentMode.bound : 200);
+
+    getWords(currentMode === "time" ? 200 : currentMode.bound);
   };
 
   const handleModeSelection = (mode) => {
@@ -169,52 +171,5 @@ function App() {
     </div>
   );
 }
-
-const Form = ({ input, handleInput, handleOnKeyUp }) => {
-  const { isLoading } = useWords();
-
-  return (
-    <div className="form">
-      <input
-        type="text"
-        value={input}
-        onKeyUp={handleOnKeyUp}
-        onChange={handleInput}
-        disabled={isLoading}
-      />
-    </div>
-  );
-};
-
-const Mode = ({ currentMode, stopwatch, timer, currentWordIndex }) => {
-  const wordsLeftProps = {
-    stopwatch,
-    currentWordIndex,
-    bound: currentMode.bound,
-  };
-
-  return (
-    <div className="timer-container">
-      {currentMode.type === "time" && <Timer timer={timer} />}
-      {currentMode.type === "words" && <WordsLeft {...wordsLeftProps} />}
-    </div>
-  );
-};
-
-const Timer = ({ timer }) => {
-  if (timer.state !== "playing") return;
-
-  return <span className="timer">{timer.time}</span>;
-};
-
-const WordsLeft = ({ stopwatch, currentWordIndex, bound }) => {
-  if (!stopwatch.isOn) return;
-
-  return (
-    <span className="timer">
-      {currentWordIndex}/{bound}
-    </span>
-  );
-};
 
 export default App;
