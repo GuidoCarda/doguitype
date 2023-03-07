@@ -103,7 +103,7 @@ function App() {
     setInput("");
     timer.reset();
     stopwatch.reset();
-    getWords(currentMode === "words" ? currentMode.bound : null);
+    getWords(currentMode === "words" ? currentMode.bound : 200);
   };
 
   const handleModeSelection = (mode) => {
