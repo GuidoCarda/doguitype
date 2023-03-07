@@ -104,6 +104,7 @@ function App() {
     setInput("");
     timer.reset();
     stopwatch.reset();
+
     getWords(currentMode === "time" ? 200 : currentMode.bound);
   };
 
