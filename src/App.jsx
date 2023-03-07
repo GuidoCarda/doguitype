@@ -68,7 +68,7 @@ function App() {
   const handleOnKeyUp = (e) => {
     const pressedKeyCode = e.keyCode;
 
-    if (pressedKeyCode === 9) return;
+    if (pressedKeyCode === 9 || pressedKeyCode === 229) return;
 
     if (currentMode.type === "time" && timer.time === 0) {
       timer.set(currentMode.bound);
