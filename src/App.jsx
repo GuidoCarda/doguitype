@@ -19,7 +19,6 @@ import useWords from "./hooks/useWords";
 //Animations
 import { AnimatePresence } from "framer-motion";
 import { checkStringEquality } from "./Utils";
-import ThemePicker from "./components/ThemePicker";
 import Mode from "./components/Mode";
 import Form from "./components/Form";
 
@@ -105,7 +104,7 @@ function App() {
     setInput("");
     timer.reset();
     stopwatch.reset();
-    getWords(currentMode === "words" ? currentMode.bound : null);
+    getWords(currentMode === "time" ? 200 : currentMode.bound);
   };
 
   const handleModeSelection = (mode) => {
