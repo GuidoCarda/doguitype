@@ -14,7 +14,7 @@ const Result = ({ charCount, handleRestart, time, currentMode }) => {
       initial="enter"
       animate="exit"
       variants={resultVariants}
-      transition={{ duration: 0.75, type: "tween" }}
+      transition={{ duration: 1, type: "tween" }}
       className="finished-test"
     >
       {currentMode.type === "words" ? (
