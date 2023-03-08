@@ -286,7 +286,8 @@ button {
   opacity: 0.8;
 }
 
-.btn:focus {
+.btn:focus,
+.theme-picker-toggler {
   outline-color: hsla(0, 0%, 53%, 0.338);
 }
 

@@ -7,6 +7,8 @@ import Result from "./components/Result";
 import Footer from "./components/Footer";
 import ModeSelector from "./components/ModeSelector";
 import WordsContainer from "./components/WordsContainer";
+import Mode from "./components/Mode";
+import Form from "./components/Form";
 
 //icons
 import { RxReload } from "react-icons/rx";
@@ -19,8 +21,6 @@ import useWords from "./hooks/useWords";
 //Animations
 import { AnimatePresence } from "framer-motion";
 import { checkStringEquality } from "./Utils";
-import Mode from "./components/Mode";
-import Form from "./components/Form";
 
 function App() {
   const { words, isLoading, getWords, updateWords } = useWords();
@@ -39,6 +39,7 @@ function App() {
   const stopwatch = useStopwatch();
 
   const currWordRef = useRef(null);
+  const inputRef = useRef(null);
 
   //Move showing words when reached 2nd line
   useEffect(() => {
@@ -60,6 +61,12 @@ function App() {
       updateWords(wordsCopy);
     }
   }, [currWordRef.current]);
+
+  //Set focus to input after fetch
+  useEffect(() => {
+    if (isLoading) return;
+    setInputFocus();
+  }, [isLoading]);
 
   const handleInput = (e) => {
     const inputValue = e.target.value.trim();
@@ -95,6 +102,11 @@ function App() {
         stopwatch.stop();
       }
     }
+  };
+
+  const setInputFocus = () => {
+    if (!inputRef.current) return;
+    inputRef.current.focus();
   };
 
   const handleRestart = () => {
@@ -150,7 +162,7 @@ function App() {
 
             <WordsContainer {...wordsData} input={input} />
 
-            <Form input={input} {...formActions} />
+            <Form input={input} {...formActions} ref={inputRef} />
 
             <button
               type="button"
