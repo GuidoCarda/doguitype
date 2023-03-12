@@ -114,6 +114,11 @@ button {
   color: rgb(160, 165, 183);
 }
 
+.footer .footer-link {
+  color: inherit;
+  margin-left: 0.5rem;
+}
+
 .nav-logo {
   display: flex;
   align-items: center;
