@@ -28,7 +28,7 @@ The result will be displayed as soon as you finish the test.
 
 ## Screenshots
 
-`![doguitype](/home.png)`
+`![doguitype screen](https://github.com/guidocarda/doguitype/blob/main/home.png?raw=true)`
 
 ## Technologies
 
